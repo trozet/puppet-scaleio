@@ -107,14 +107,14 @@ class scaleio {
     }
   }
   
-	define login($password)
-	{
-	  if $password {
-	    exec { 'Login':
-	      command => "scli --approve_certificate --login --username admin --password ${password}",
-	      path    => '/bin',
-	    }
-	  }
-	}
-  
+  define login($password)
+  {
+    if $password {
+      exec { 'Login':
+        command => "scli --approve_certificate --login --username admin --password ${password}",
+        path    => '/bin',
+      }
+    }
+  }
+    
 }
