@@ -7,7 +7,7 @@ class scaleio::storage_pool (
   $rmcache_write_handling_mode    = undef, # cached|passthrough,
   $rebuild_mode                   = undef, # enable|disable
   $rebalance_mode                 = undef, # enable|disable
-  $scanner_mode                   = undef, # device_only|data_comparison|disable
+  $scanner_mode                   = '',    # device_only|data_comparison|disable
   $scanner_bandwidth_limit        = undef, # int
   $spare_percentage               = undef, # int
   $zero_padding_policy            = undef, # enable|disable
@@ -17,16 +17,6 @@ class scaleio::storage_pool (
   scaleio::cmd {$ensure:
     action => $ensure, entity => 'storage_pool', value => $name,
     scope_entity => 'protection_domain', scope_value => $protection_domain}
-  
-  define set($is_defined, $change = ' ')
-  {
-    if $is_defined {
-	    scaleio::cmd {$title:
-	      action => $title, ref => "storage_pool_name", value => $scaleio::storage_pool::name,
-	      scope_entity => 'protection_domain', scope_value => $scaleio::storage_pool::protection_domain,
-	      extra_opts => $change}      
-    }
-  }
   
   set { 'set_checksum_mode':
     is_defined => $checksum_mode,
@@ -60,18 +50,24 @@ class scaleio::storage_pool (
     is_defined => $rebalance_parallelism_limit,
     change => "--limit ${rebalance_parallelism_limit}"}
     
-  if $scanner_mode {
-    if $scanner_mode == 'disable' {
-		  set { 'disable_background_device_scanner': 
-		    is_defined => true}  
-		}
-		else {
-		  set { 'enable_background_device_scanner': 
-		    is_defined => true,
-		    change => "--scanner_mode ${scanner_mode} --scanner_bandwidth_limit ${scanner_bandwidth_limit}"}		  
-		}
-	}
+  set { "${scanner_mode}_background_device_scanner": 
+    is_defined => $scanner_mode != '',
+    change => $scanner_mode_change }
+        
+  $scanner_mode_change = $scanner_mode ? {
+    'disable' => "--scanner_mode ${scanner_mode} --scanner_bandwidth_limit ${scanner_bandwidth_limit}",
+    default   => ' '}
 
+  define set($is_defined, $change = ' ')
+  {
+    if $is_defined {
+      scaleio::cmd {$title:
+        action => $title, ref => "storage_pool_name", value => $scaleio::storage_pool::name,
+        scope_entity => 'protection_domain', scope_value => $scaleio::storage_pool::protection_domain,
+        extra_opts => $change}      
+    }
+  }
+    
   # TODO:
   # Rebuild and rebalance policy should be done in separate manifest - too many options and values
 }

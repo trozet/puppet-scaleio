@@ -28,6 +28,6 @@ class scaleio::cluster (
   }
   
   create_cluster { 'cluster': mdm_ip => $mdm_ip } ~>
-  class { 'scaleio::login': password => $password }
+  scaleio::login { 'login': password => $password }
   change_password { 'password': password => $password, new_password => $new_password,}
 }

@@ -1,14 +1,29 @@
 {
   "author": "emc",
-  "dependencies": [],
-  "description": "UNKNOWN",
+  "name": "puppet-scaleio",
+  "summary": "Puppet library for Scaleio 2.0 deployment and configuration",
+  "version": "0.1.0",
   "license": "Apache License, Version 2.0",
-  "name": "emc-scaleio",
-  "operatingsystem_support": [],
-  "project_page": "UNKNOWN",
-  "requirements": [],
-  "source": "UNKNOWN",
-  "summary": "UNKNOWN",
-  "tags": [],
-  "version": "0.1.0"
+  "source": "https://github.com/cloudscaling/puppet-scaleio",
+  "project_page": "https://github.com/cloudscaling/puppet-scaleio",
+  "issues_url": "https://github.com/cloudscaling/puppet-scaleio/issues",
+  "dependencies": [
+  	{"name":"puppetlabs-firewall","version_requirement":">= 1.1.3"},
+    {"name":"puppetlabs-java","version_requirement":">= 1.1.2"},
+    {"name":"dalen-dnsquery","version_requirement":">= 2.0.0"},
+    {"name":"puppetlabs-stdlib","version_requirement":">= 4.3.2"}
+  ],
+  "operatingsystem_support": [
+  	{
+  	  "operatingsystemrelease": ["14"],
+      "operatingsystem": "Ubuntu"  
+    }
+  ],
+  "requirements": [
+  	{
+      "version_requirement": ">= 3.7.4",
+      "name": "puppet"
+    }
+  ],
+  "tags": []
 }

@@ -9,9 +9,9 @@ class scaleio::protection_domain (
     action => $ensure, entity => 'protection_domain', value => $name,}
   if $fault_sets {
     $fs_resources = suffix($fault_sets, 'f')
-	  scaleio::cmd {$fs_resources:
-	    action => $ensure_properties, entity => 'fault_set', value_in_title => true,
-	    scope_entity => 'protection_domain', scope_value => $name }     
+    scaleio::cmd {$fs_resources:
+      action => $ensure_properties, entity => 'fault_set', value_in_title => true,
+      scope_entity => 'protection_domain', scope_value => $name }     
   }
   if $storage_pools {
     $sp_resources = suffix($storage_pools, 's')
