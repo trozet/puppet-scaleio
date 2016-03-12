@@ -1,5 +1,6 @@
 class scaleio::sds_server (
-  $ensure                  = undef)
+  $ensure = 'present',
+  )
 { 
   firewall { '001 Open Port 7072 for ScaleIO SDS':
     dport   => [7072],
