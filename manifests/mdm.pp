@@ -8,12 +8,12 @@ class scaleio::mdm (
   $management_ips         = undef,
   )
 { 
-  
   if $ensure == 'present' {
     $management_ip_opts = $management_ips ? {undef => '', default => "--new_mdm_management_ip ${management_ips}" }
     $port_opts = $port ? {undef => '', default => "--new_mdm_port ${port}" }
     scaleio::cmd {$ensure:
-      action => 'add_standby_mdm', ref => 'new_mdm_name', value => $name, 
+      action => 'add_standby_mdm', ref => 'new_mdm_name', value => $name,
+      scope_ref => 'mdm_role', scope_value => $role,
       extra_opts => "--new_mdm_ip ${ips} ${port_opts} ${management_ip_opts}",
       unless_query => "query_cluster | grep ${name}"}
   }
