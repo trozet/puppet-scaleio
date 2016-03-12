@@ -1,6 +1,10 @@
 class scaleio::mdm_server (
-  $is_manager              = undef,
-  $ensure                  = undef)
+  $ensure                   = 'present',
+  $is_manager               = undef,
+  $master_mdm_name          = undef,
+  $mdm_ips                  = undef, # "1.2.3.4,1.2.3.5"
+  $mdm_management_ips       = undef, # "1.2.3.4,1.2.3.5"
+  )
 { 
   firewall { '001 Open Ports 6611 and 9011 for ScaleIO MDM':
     dport   => [6611, 9011, 443],
@@ -15,6 +19,7 @@ class scaleio::mdm_server (
 	  source    => '/home/alevine/shared/EMC-ScaleIO-mdm-2.0-5014.0.Ubuntu.14.04.x86_64.deb',
 	  ensure    => $ensure,
 	}
+	
 	if $is_manager != undef
   {
     # Workaround:
@@ -30,5 +35,15 @@ class scaleio::mdm_server (
 	  service { 'mdm':
 	    ensure => 'running',
 	  }
+  }
+  
+  # Cluster creation is here
+  if $master_mdm_name {
+    $opts = '--approve_certificate --accept_license --create_mdm_cluster  --use_nonsecure_communication'
+    exec { 'create cluster':
+      command => "scli ${opts} --master_mdm_name ${master_mdm_name} --master_mdm_ip ${mdm_ip} --master_mdm_management_ip ${mdm_management_ip}",
+      unless => 'scli --query_cluster --approve_certificate',
+      path => '/bin',
+      require => [File_line['mdm role'], Service['mdm']]}
   }
 }

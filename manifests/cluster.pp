@@ -1,33 +1,40 @@
 class scaleio::cluster (
-  $mdm_ip             = undef,
-  $cluster3_ips       = undef,
-  $cluster5_ips       = undef,
-  $ensure             = undef,
-  $password           = 'admin',
-  $new_password       = undef,)
-{
-
-  Exec { path => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ] }
-  
-  define create_cluster($mdm_ip) {
-    if $mdm_ip {
-      exec { 'create cluster':
-        command => "scli --approve_certificate --accept_license --create_mdm_cluster  --use_nonsecure_communication --master_mdm_ip ${mdm_ip}",
-        unless => 'scli --query_cluster --approve_certificate',
-      }
-    }
+  $ensure                       = 'present', 
+  $cluster_mode                 = undef, # 1|3|5
+  $slave_names                  = undef, # "mdm1,mdm2"
+  $tb_names                     = undef, # "tb1,tb2"
+  $password                     = undef,
+  $new_password                 = undef,
+  $restricted_sdc_mode          = undef, # enabled|disabled
+  $license_file_path            = undef,
+  $remote_readonly_limit_state  = undef, # enabled|disabled
+  )
+{ 
+  if $cluster_mode {
+    $action = $ensure ? {'absent' => 'remove', default => 'add'}
+    scaleio::cmd {'switch cluster mode':
+      action => 'switch_cluster_mode', ref => 'cluster_mode', value => "${cluster_mode}_node",
+      extra_opts => "--${action}_slave_mdm_name ${slave_names} --${action}_tb_name ${tb_names} --i_am_sure"}   
+  }  
+  if $new_password {
+    scaleio::cmd {'set password':
+      action => 'set_password', ref => 'new_password', value => $new_password,
+      scope_ref => 'old_password', scope_value => $password}
+  }
+  if $restricted_sdc_mode {
+    scaleio::cmd {'set restricted sdc mode':
+      action => 'set_restricted_sdc_mode', ref => 'restricted_sdc_mode', value => $restricted_sdc_mode}
+  }
+  if $license_file_path {
+    scaleio::cmd {'set license':
+      action => 'set_license', ref => 'license_file', value => $license_file_path}
+  }
+  if $remote_readonly_limit_state {
+    scaleio::cmd {'set remote readonly limit state':
+      action => 'set', entity => 'remote_readonly_limit_state', value => $remote_readonly_limit_state}
   }
   
-  define change_password($password, $new_password) {
-    if $new_password {
-      exec { 'change password':
-        command => "scli --set_password --approve_certificate --old_password ${password} --new_password ${new_password}",
-        require => Class['scaleio::login'],
-      }
-    }
-  }
-  
-  create_cluster { 'cluster': mdm_ip => $mdm_ip } ~>
-  scaleio::login { 'login': password => $password }
-  change_password { 'password': password => $password, new_password => $new_password,}
+  # TODO:
+  # Replace cluster mdm
+  # Users, Volumes, Certificates, Caches
 }

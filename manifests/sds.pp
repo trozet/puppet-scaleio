@@ -1,14 +1,14 @@
 class scaleio::sds (
   $ensure             = 'present',
   $ensure_properties  = 'present',
-  $name               = undef,
+  $name,
   $protection_domain  = undef,
   $fault_set          = undef,
   $port               = undef,
-  $ips                = undef,
-  $ip_roles           = undef,
-  $storage_pools      = undef,
-  $device_paths       = undef,
+  $ips                = undef, # "1.2.3.4,1.2.3.5"
+  $ip_roles           = undef, # "all,all"
+  $storage_pools      = undef, # "sp1,sp2"
+  $device_paths       = undef, # "/dev/sdb,/dev/sdc"
   )
 { 
   

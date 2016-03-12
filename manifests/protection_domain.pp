@@ -1,5 +1,5 @@
 class scaleio::protection_domain (
-  $name               = undef,
+  $name,
   $ensure             = 'present',
   $ensure_properties  = 'present',
   $fault_sets         = undef,

@@ -1,11 +1,11 @@
 class scaleio::mdm (
   $ensure                 = 'present',
   $ensure_properties      = 'present',
-  $name                   = undef,
+  $name,
   $role                   = 'manager',
   $port                   = undef,
-  $ips                    = undef,
-  $management_ips         = undef,
+  $ips                    = undef, # "1.2.3.4,1.2.3.5"
+  $management_ips         = undef, # "1.2.3.4,1.2.3.5"
   )
 { 
   if $ensure == 'present' {
