@@ -3,7 +3,8 @@ class scaleio::protection_domain (
   $ensure             = 'present',
   $ensure_properties  = 'present',
   $fault_sets         = undef,
-  $storage_pools      = undef,)
+  $storage_pools      = undef,
+  )
 {  
   scaleio::cmd {$ensure:
     action => $ensure, entity => 'protection_domain', value => $name,}
