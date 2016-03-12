@@ -19,4 +19,7 @@ class scaleio::protection_domain (
       action => $ensure_properties, entity => 'storage_pool', value_in_title => true,
       scope_entity => 'protection_domain', scope_value => $name }     
   }
+  
+  # TODO:
+  # set_sds_network_limits
 }

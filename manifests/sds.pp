@@ -3,6 +3,7 @@ class scaleio::sds (
   $ensure_properties  = 'present',
   $name               = undef,
   $protection_domain  = undef,
+  $fault_set          = undef,
   $ips                = undef,
   $ip_roles           = undef,
   $storage_pools      = undef,
@@ -16,10 +17,11 @@ class scaleio::sds (
     $role_opts = $ip_roles ? {undef => '', default => "--sds_ip_role ${ip_roles}" }
     $storage_pool_opts = $storage_pools ? {undef => '', default => "--storage_pool ${storage_pools}" }
     $device_path_opts = $device_paths ? {undef => '', default => "--device_path ${device_paths}" }
+    $fault_set_opts = $fault_set ? {undef => '', default => "--fault_set_name ${fault_set}" }
     scaleio::cmd {$ensure:
       action => $ensure, entity => 'sds', value => $name, 
       scope_entity => 'protection_domain', scope_value => $protection_domain,
-      extra_opts => "--sds_ip ${ips} ${role_opts} ${storage_pool_opts} ${device_path_opts}"}
+      extra_opts => "--sds_ip ${ips} ${role_opts} ${storage_pool_opts} ${device_path_opts} ${fault_set_opts}"}
   }
   elsif $ensure == 'absent' {
     scaleio::cmd {$ensure:
@@ -72,4 +74,9 @@ class scaleio::sds (
         scope_entity => 'sds', scope_value => $name}  
     }
   }
+
+  # TODO:
+  # rmcache -size/enable/disable
+  # num_of_io_buffers
+  # port (only one, multiple ports are not planned)
 }
