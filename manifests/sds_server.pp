@@ -15,4 +15,7 @@ class scaleio::sds_server (
     source    => '/home/alevine/shared/EMC-ScaleIO-sds-2.0-5014.0.Ubuntu.14.04.x86_64.deb',
     ensure    => $ensure,
   }
+
+  # TODO:
+  # "absent" cleanup
 }

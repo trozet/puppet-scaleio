@@ -17,4 +17,7 @@ class scaleio::sdc_server (
       path => '/opt/emc/scaleio/sdc/bin',
       require => Package['emc-scaleio-sdc']}
   }
+  
+  # TODO:
+  # "absent" cleanup
 }

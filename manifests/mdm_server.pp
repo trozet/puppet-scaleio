@@ -41,9 +41,11 @@ class scaleio::mdm_server (
   if $master_mdm_name {
     $opts = '--approve_certificate --accept_license --create_mdm_cluster  --use_nonsecure_communication'
     exec { 'create cluster':
-      command => "scli ${opts} --master_mdm_name ${master_mdm_name} --master_mdm_ip ${mdm_ip} --master_mdm_management_ip ${mdm_management_ip}",
+      command => "scli ${opts} --master_mdm_name ${master_mdm_name} --master_mdm_ip ${mdm_ips} --master_mdm_management_ip ${mdm_management_ips}",
       unless => 'scli --query_cluster --approve_certificate',
-      path => '/bin',
-      require => [File_line['mdm role'], Service['mdm']]}
+      path => '/bin'}
   }
+  
+  # TODO:
+  # "absent" cleanup
 }
