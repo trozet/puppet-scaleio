@@ -17,7 +17,7 @@ class scaleio::sds (
     # Verify that number of elements in ips with ip_roles and storage_pools with device_paths are equal
     # One storage_pool for all device_paths is not supported
     $role_opts = $ip_roles ? {undef => '', default => "--sds_ip_role ${ip_roles}" }
-    $storage_pool_opts = $storage_pools ? {undef => '', default => "--storage_pool ${storage_pools}" }
+    $storage_pool_opts = $storage_pools ? {undef => '', default => "--storage_pool_name ${storage_pools}" }
     $device_path_opts = $device_paths ? {undef => '', default => "--device_path ${device_paths}" }
     $fault_set_opts = $fault_set ? {undef => '', default => "--fault_set_name ${fault_set}" }
     $port_opts = $port ? {undef => '', default => "--sds_port ${port}" }

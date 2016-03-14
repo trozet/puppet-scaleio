@@ -40,8 +40,11 @@ class scaleio::mdm_server (
   # Cluster creation is here
   if $master_mdm_name {
     $opts = '--approve_certificate --accept_license --create_mdm_cluster  --use_nonsecure_communication'
+    $management_ip_opts = $mdm_management_ips ? {
+      undef => '',
+      default => "--master_mdm_management_ip ${mdm_management_ips}"}
     exec { 'create cluster':
-      command => "scli ${opts} --master_mdm_name ${master_mdm_name} --master_mdm_ip ${mdm_ips} --master_mdm_management_ip ${mdm_management_ips}",
+      command => "scli ${opts} --master_mdm_name ${master_mdm_name} --master_mdm_ip ${mdm_ips} ${management_ip_opts}",
       unless => 'scli --query_cluster --approve_certificate',
       path => '/bin'}
   }
