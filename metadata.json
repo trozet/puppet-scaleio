@@ -9,8 +9,6 @@
   "issues_url": "https://github.com/cloudscaling/puppet-scaleio/issues",
   "dependencies": [
   	{"name":"puppetlabs-firewall","version_requirement":">= 1.1.3"},
-    {"name":"puppetlabs-java","version_requirement":">= 1.1.2"},
-    {"name":"dalen-dnsquery","version_requirement":">= 2.0.0"},
     {"name":"puppetlabs-stdlib","version_requirement":">= 4.3.2"}
   ],
   "operatingsystem_support": [

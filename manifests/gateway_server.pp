@@ -68,4 +68,5 @@ class scaleio::gateway_server (
 
   # TODO:
   # "absent" cleanup
+  # try installing java by puppet install module puppetlabs-java
 }
