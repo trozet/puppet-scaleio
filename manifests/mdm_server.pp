@@ -11,16 +11,11 @@ class scaleio::mdm_server (
     proto  => tcp,
     action => accept,
   }
-	package { ['numactl', 'libaio1', 'mutt', 'python', 'python-paramiko' ]:
-	  ensure => installed,
-	} ->
-	package { 'emc-scaleio-mdm':
-	  provider  => dpkg,
-	  source    => '/home/alevine/shared/EMC-ScaleIO-mdm-2.0-5014.0.Ubuntu.14.04.x86_64.deb',
-	  ensure    => $ensure,
-	}
-	
-	if $is_manager != undef
+  package { ['numactl', 'libaio1', 'mutt', 'python', 'python-paramiko', 'emc-scaleio-mdm' ]:
+    ensure => installed,
+  }
+
+  if $is_manager != undef
   {
     # Workaround:
     #   Explicitly add the MDM role setting into the config file because
@@ -32,11 +27,11 @@ class scaleio::mdm_server (
       match  => "^actor_role_is_manager",
       require => Package['emc-scaleio-mdm'],
     } ~>
-	  service { 'mdm':
-	    ensure => 'running',
-	  }
+    service { 'mdm':
+      ensure => 'running',
+    }
   }
-  
+
   # Cluster creation is here
   if $master_mdm_name {
     $opts = '--approve_certificate --accept_license --create_mdm_cluster  --use_nonsecure_communication'
@@ -48,7 +43,7 @@ class scaleio::mdm_server (
       unless => 'scli --query_cluster --approve_certificate',
       path => '/bin'}
   }
-  
+
   # TODO:
   # "absent" cleanup
 }
