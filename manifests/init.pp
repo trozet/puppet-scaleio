@@ -42,6 +42,7 @@ class scaleio {
   # Accepts actions "present" and "absent" instead of "add" and "remove".
   # Supports calling with arrays for values, in which case $value shouldn't
   # be used, instead $value_in_title flag should be set.
+  # facter mdm_ips variable should be set to "ip1,ip2,...".
   define cmd(
     $action,
     $entity = undef,
@@ -60,8 +61,7 @@ class scaleio {
     $cmd = $action ? {
       'present' => 'add',
       'absent' => 'remove',
-      default => $action,
-    }
+      default => $action}
     $cmd_opt = $entity ? {
       undef =>  "--${cmd}",
       default => "--${cmd}_${entity}"}
@@ -90,14 +90,17 @@ class scaleio {
       undef => '',
       default => "--${paired_ref} ${paired_obj_value}"}    
     
-    $command = "scli --approve_certificate ${cmd_opt} ${obj_ref_opt} ${scope_obj_ref_opt} ${paired_obj_ref_opt} ${extra_opts}"
+    $mdm_opts = $::mdm_ips ? {
+      undef => '',
+      default => "--mdm_ip ${::mdm_ips}"}
+    $command = "scli ${mdm_opts} --approve_certificate ${cmd_opt} ${obj_ref_opt} ${scope_obj_ref_opt} ${paired_obj_ref_opt} ${extra_opts}"
     $unless_cmd = $cmd ? {
-      'add' => "scli --approve_certificate --query_${entity} ${obj_ref_opt} ${scope_obj_ref_opt}",
+      'add' => "scli ${mdm_opts} --approve_certificate --query_${entity} ${obj_ref_opt} ${scope_obj_ref_opt}",
       default => undef}
     # Custom unless query for addition is set - will check existense of the val to be added
     $unless_command = $unless_query ? {
       undef => $unless_cmd,
-      default => "scli --approve_certificate --${unless_query} ${val}"}
+      default => "scli ${mdm_opts} --approve_certificate --${unless_query} ${val}"}
     
     notify { $command: }
     exec { $command:
@@ -110,8 +113,11 @@ class scaleio {
   define login($password)
   {
     if $password {
+	    $mdm_opts = $::mdm_ips ? {
+	      undef => '',
+	      default => "--mdm_ip ${::mdm_ips}"}
       exec { 'Login':
-        command => "scli --approve_certificate --login --username admin --password ${password}",
+        command => "scli ${mdm_opts} --approve_certificate --login --username admin --password ${password}",
         path    => '/bin',
       }
     }
