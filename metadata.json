@@ -1,6 +1,6 @@
 {
-  "author": "emc",
-  "name": "puppet-scaleio",
+  "author": "cloudscaling",
+  "name": "cloudscaling-scaleio",
   "summary": "Puppet library for Scaleio 2.0 deployment and configuration",
   "version": "0.1.0",
   "license": "Apache License, Version 2.0",

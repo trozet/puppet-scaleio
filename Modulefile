@@ -1,4 +1,4 @@
-name    'emc-scaleio'
+name    'cloudscaling-scaleio'
 version '0.1.0'
 source 'UNKNOWN'
 author 'emc'
