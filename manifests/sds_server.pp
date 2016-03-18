@@ -7,8 +7,11 @@ class scaleio::sds_server (
     proto  => tcp,
     action => accept,
   }
-  package { ['numactl', 'libaio1', 'emc-scaleio-sds' ]:
+  package { ['numactl', 'libaio1']:
     ensure => installed,
+  } ->
+  package { ['emc-scaleio-sds']:
+    ensure => $ensure,
   }
 
   # TODO:

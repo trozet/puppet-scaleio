@@ -36,7 +36,7 @@
 # Copyright 2016 Your name here, unless otherwise noted.
 #
 class scaleio {
-  
+
   # Logic compiling scli command from parameters and invoking it.
   # For actions "add" checks with "query" in unless if such entity exists.
   # Accepts actions "present" and "absent" instead of "add" and "remove".
@@ -84,12 +84,12 @@ class scaleio {
     $scope_obj_ref_opt = $scope_value ? {
       undef => '',
       default => "${scope_obj_ref} ${scope_value}"}
-    # Paired values for arrays of pairs (e.g., ips and roles for SDS)  
+    # Paired values for arrays of pairs (e.g., ips and roles for SDS)
     $paired_obj_value = $paired_hash[chop($title)]
     $paired_obj_ref_opt = $paired_obj_value ? {
       undef => '',
-      default => "--${paired_ref} ${paired_obj_value}"}    
-    
+      default => "--${paired_ref} ${paired_obj_value}"}
+
     $mdm_opts = $::mdm_ips ? {
       undef => '',
       default => "--mdm_ip ${::mdm_ips}"}
@@ -101,7 +101,7 @@ class scaleio {
     $unless_command = $unless_query ? {
       undef => $unless_cmd,
       default => "scli ${mdm_opts} --approve_certificate --${unless_query} ${val}"}
-    
+
     notify { $command: }
     exec { $command:
       command => $command,
@@ -109,18 +109,18 @@ class scaleio {
       unless => $unless_command,
     }
   }
-  
+
   define login($password)
   {
     if $password {
-	    $mdm_opts = $::mdm_ips ? {
-	      undef => '',
-	      default => "--mdm_ip ${::mdm_ips}"}
+      $mdm_opts = $::mdm_ips ? {
+        undef => '',
+        default => "--mdm_ip ${::mdm_ips}"
+      }
       exec { 'Login':
         command => "scli ${mdm_opts} --approve_certificate --login --username admin --password ${password}",
-        path    => '/bin',
+        path => '/bin',
       }
     }
   }
-    
 }

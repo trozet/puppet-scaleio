@@ -2,12 +2,12 @@ class scaleio::mdm (
   $ensure                 = 'present',
   $ensure_properties      = 'present',
   $name,
-  $role                   = 'manager',  # manager|tb 
+  $role                   = 'manager',  # manager|tb
   $port                   = undef,
   $ips                    = undef,      # "1.2.3.4,1.2.3.5"
   $management_ips         = undef,      # "1.2.3.4,1.2.3.5"
   )
-{ 
+{
   if $ensure == 'present' {
     $management_ip_opts = $management_ips ? {undef => '', default => "--new_mdm_management_ip ${management_ips}" }
     $port_opts = $port ? {undef => '', default => "--new_mdm_port ${port}" }
@@ -21,7 +21,7 @@ class scaleio::mdm (
     scaleio::cmd {$ensure:
       action => 'remove_standby_mdm', ref => 'remove_mdm_name', value => $name,}
   }
-  
+
   if $management_ips {
     scaleio::cmd {$ensure_properties:
       action => 'modify_management_ip', ref => 'target_mdm_name', value => $name,

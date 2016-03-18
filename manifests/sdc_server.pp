@@ -3,8 +3,11 @@ class scaleio::sdc_server (
   $mdm_ip  = undef,
   )
 {
-  package { ['numactl', 'libaio1', 'emc-scaleio-sdc' ]:
+  package { ['numactl', 'libaio1']:
     ensure => installed,
+  } ->
+  package { ['emc-scaleio-sdc']:
+    ensure => $ensure,
   }
   if $mdm_ip {
     exec { 'connect to mdm':
