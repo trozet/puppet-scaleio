@@ -12,25 +12,25 @@ class scaleio::cluster (
 { 
   if $cluster_mode {
     $action = $ensure ? {'absent' => 'remove', default => 'add'}
-    scaleio::cmd {'switch cluster mode':
+    scaleio::scli::cmd {'switch cluster mode':
       action => 'switch_cluster_mode', ref => 'cluster_mode', value => "${cluster_mode}_node",
       extra_opts => "--${action}_slave_mdm_name ${slave_names} --${action}_tb_name ${tb_names} --i_am_sure"}   
   }  
   if $new_password {
-    scaleio::cmd {'set password':
+    scaleio::scli::cmd {'set password':
       action => 'set_password', ref => 'new_password', value => $new_password,
       scope_ref => 'old_password', scope_value => $password}
   }
   if $restricted_sdc_mode {
-    scaleio::cmd {'set restricted sdc mode':
+    scaleio::scli::cmd {'set restricted sdc mode':
       action => 'set_restricted_sdc_mode', ref => 'restricted_sdc_mode', value => $restricted_sdc_mode}
   }
   if $license_file_path {
-    scaleio::cmd {'set license':
+    scaleio::scli::cmd {'set license':
       action => 'set_license', ref => 'license_file', value => $license_file_path}
   }
   if $remote_readonly_limit_state {
-    scaleio::cmd {'set remote readonly limit state':
+    scaleio::scli::cmd {'set remote readonly limit state':
       action => 'set', entity => 'remote_readonly_limit_state', value => $remote_readonly_limit_state}
   }
   

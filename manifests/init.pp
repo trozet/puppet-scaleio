@@ -37,90 +37,123 @@
 #
 class scaleio {
 
-  # Logic compiling scli command from parameters and invoking it.
-  # For actions "add" checks with "query" in unless if such entity exists.
-  # Accepts actions "present" and "absent" instead of "add" and "remove".
-  # Supports calling with arrays for values, in which case $value shouldn't
-  # be used, instead $value_in_title flag should be set.
-  # facter mdm_ips variable should be set to "ip1,ip2,...".
-  define cmd(
-    $action,
-    $entity = undef,
-    $ref = 'name',
-    $value = undef,
-    $scope_entity = undef,
-    $scope_ref = 'name',
-    $scope_value = undef,
-    $value_in_title = undef,
-    $paired_ref = undef,
-    $paired_hash = {},
-    $extra_opts = '',
-    $unless_query = undef,)
+  define scaleio::cluster (
+	  $ensure                       = 'present', 
+	  $cluster_mode                 = undef, # 1|3|5
+	  $slave_names                  = undef, # "mdm1,mdm2"
+	  $tb_names                     = undef, # "tb1,tb2"
+	  $password                     = undef,
+	  $new_password                 = undef,
+	  $restricted_sdc_mode          = undef, # enabled|disabled
+	  $license_file_path            = undef,
+	  $remote_readonly_limit_state  = undef, # enabled|disabled
+  )
   {
-    # Command
-    $cmd = $action ? {
-      'present' => 'add',
-      'absent' => 'remove',
-      default => $action}
-    $cmd_opt = $entity ? {
-      undef =>  "--${cmd}",
-      default => "--${cmd}_${entity}"}
-    # Taking title for value for array values. Chop is used to extract ips from resources
-    # because one different extra character per call allows to differentiate them.
-    $val = $value_in_title ? {
-      undef => $value,
-      default => chop($title)} 
-    # Main object parts
-    $obj_ref = $entity ? {
-      undef =>  "--${ref}",
-      default => "--${entity}_${ref}"}
-    $obj_ref_opt = $val ? {
-      undef => '',
-      default => "${obj_ref} ${val}"}
-    # Scope object parts (e.g. protection_domain for fault_sets)
-    $scope_obj_ref = $scope_entity ? {
-      undef =>  "--${scope_ref}",
-      default => "--${scope_entity}_${scope_ref}"}
-    $scope_obj_ref_opt = $scope_value ? {
-      undef => '',
-      default => "${scope_obj_ref} ${scope_value}"}
-    # Paired values for arrays of pairs (e.g., ips and roles for SDS)
-    $paired_obj_value = $paired_hash[chop($title)]
-    $paired_obj_ref_opt = $paired_obj_value ? {
-      undef => '',
-      default => "--${paired_ref} ${paired_obj_value}"}
-
-    $mdm_opts = $::mdm_ips ? {
-      undef => '',
-      default => "--mdm_ip ${::mdm_ips}"}
-    $command = "scli ${mdm_opts} --approve_certificate ${cmd_opt} ${obj_ref_opt} ${scope_obj_ref_opt} ${paired_obj_ref_opt} ${extra_opts}"
-    $unless_cmd = $cmd ? {
-      'add' => "scli ${mdm_opts} --approve_certificate --query_${entity} ${obj_ref_opt} ${scope_obj_ref_opt}",
-      default => undef}
-    # Custom unless query for addition is set - will check existense of the val to be added
-    $unless_command = $unless_query ? {
-      undef => $unless_cmd,
-      default => "scli ${mdm_opts} --approve_certificate --${unless_query} ${val}"}
-
-    notify { $command: }
-    exec { $command:
-      command => $command,
-      path => ['/bin/'],
-      unless => $unless_command,
+    class { 'scaleio::cluster': 
+      ensure=>$ensure, cluster_mode=>$cluster_mode,
+      slave_names=>$slave_names, tb_names=>$tb_names,
+      password=>$password, new_password=>$new_password,
+      restricted_sdc_mode=>$restricted_sdc_mode,
+      license_file_path=>$license_file_path,
+      remote_readonly_limit_state=>$remote_readonly_limit_state,
+    }    
+  }
+  
+  define scaleio::mdm (
+	  $ensure                 = 'present',
+	  $ensure_properties      = 'present',
+	  $name,
+	  $role                   = 'manager',  # manager|tb
+	  $port                   = undef,
+	  $ips                    = undef,      # "1.2.3.4,1.2.3.5"
+	  $management_ips         = undef,      # "1.2.3.4,1.2.3.5"
+  )
+  {
+    class { 'scaleio::mdm': 
+      ensure=>$ensure, ensure_properties=>$ensure_properties, name=>$name,
+      role=>$role, port=>$port, ips=>$ips, management_ips=>$management_ips,
     }
+  }
+
+  define sds (
+	  $ensure             = 'present',
+	  $ensure_properties  = 'present',
+	  $name,
+	  $protection_domain  = undef,
+	  $fault_set          = undef,
+	  $port               = undef,
+	  $ips                = undef, # "1.2.3.4,1.2.3.5"
+	  $ip_roles           = undef, # "all,all"
+	  $storage_pools      = undef, # "sp1,sp2"
+	  $device_paths       = undef, # "/dev/sdb,/dev/sdc"
+  )
+  {
+    class { 'scaleio::sds':
+      ensure=>$ensure, ensure_properties=>$ensure_properties, name=>$name,
+      protection_domain=>$protection_domain, fault_set=>$fault_set, port=>$port,
+      ips=>$ips, ip_roles=>$ip_roles, storage_pools=>$storage_pools, device_paths=>$device_paths,
+    }
+  }
+
+  define sdc (
+    $ensure = 'present',
+    $ip,
+  )
+  {
+    class { 'scaleio::sdc':
+      ensure=>$ensure, ip=>$ip,
+    }
+  }
+
+  define protection_domain (
+	  $ensure             = 'present',
+	  $ensure_properties  = 'present',
+    $name,
+	  $fault_sets         = undef,
+	  $storage_pools      = undef,
+  )
+  {
+    class { 'scaleio::protection_domain':
+      ensure=>$ensure, ensure_properties=>$ensure_properties, name=>$name,
+      fault_sets=>$fault_sets, storage_pools=>$storage_pools,
+    }
+  }
+
+  class scaleio::storage_pool (
+	  $ensure                         = 'present',
+	  $name,
+	  $protection_domain,
+	  $checksum_mode                  = undef, # enable|disable
+	  $rmcache_usage                  = undef, # use|dont_use
+	  $rmcache_write_handling_mode    = undef, # cached|passthrough,
+	  $rebuild_mode                   = undef, # enable|disable
+	  $rebalance_mode                 = undef, # enable|disable
+	  $scanner_mode                   = '',    # device_only|data_comparison|disable
+	  $scanner_bandwidth_limit        = undef, # int
+	  $spare_percentage               = undef, # int
+	  $zero_padding_policy            = undef, # enable|disable
+	  $rebalance_parallelism_limit    = undef, # int
+  )
+  {
+    class { 'scaleio::storage_pool':
+      ensure=>$ensure, name=>$name,
+      protection_domain=>$protection_domain, checksum_mode=>$checksum_mode,
+      rmcache_usage=>$rmcache_usage, rmcache_write_handling_mode=>$rmcache_write_handling_mode,
+      rebuild_mode=>$rebuild_mode, rebalance_mode=>$rebalance_mode,
+      scanner_mode=>$scanner_mode, scanner_bandwidth_limit=>$scanner_bandwidth_limit,
+      spare_percentage=>$spare_percentage, zero_padding_policy=>$zero_padding_policy,
+      rebalance_parallelism_limit=>$rebalance_parallelism_limit,
+    }    
   }
 
   define login($password)
   {
-    if $password {
-      $mdm_opts = $::mdm_ips ? {
-        undef => '',
-        default => "--mdm_ip ${::mdm_ips}"
-      }
-      exec { 'Login':
-        command => "scli ${mdm_opts} --approve_certificate --login --username admin --password ${password}",
-        path => '/bin',
-      }
+    scaleio::scli::cmd { 'login':
+      action=>'login', ref=>'password', value=>$password,
+      scope_ref=>'username', scope_value=>'admin'
     }
   }
+
+  # TODO:
+  # Comments and headers everywhere
 }

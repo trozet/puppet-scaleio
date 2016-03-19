@@ -4,7 +4,7 @@ class scaleio::sdc (
   )
 { 
   if $ensure == 'absent' { 
-    scaleio::cmd {$ensure:
+    scaleio::scli::cmd {$ensure:
       action => 'remove_sdc', ref => 'sdc_ip', value => $ip,}
   }
 }

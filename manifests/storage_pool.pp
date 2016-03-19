@@ -14,7 +14,7 @@ class scaleio::storage_pool (
   $rebalance_parallelism_limit    = undef, # int
   )
 {
-  scaleio::cmd {$ensure:
+  scaleio::scli::cmd {$ensure:
     action => $ensure, entity => 'storage_pool', value => $name,
     scope_entity => 'protection_domain', scope_value => $protection_domain}
   
@@ -61,7 +61,7 @@ class scaleio::storage_pool (
   define set($is_defined, $change = ' ')
   {
     if $is_defined {
-      scaleio::cmd {$title:
+      scaleio::scli::cmd {$title:
         action => $title, ref => "storage_pool_name", value => $scaleio::storage_pool::name,
         scope_entity => 'protection_domain', scope_value => $scaleio::storage_pool::protection_domain,
         extra_opts => $change}      
