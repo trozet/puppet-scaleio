@@ -1,4 +1,4 @@
-class scaleio::protection_domain (
+define scaleio::protection_domain (
   $name,
   $ensure             = 'present',
   $ensure_properties  = 'present',
@@ -6,17 +6,17 @@ class scaleio::protection_domain (
   $storage_pools      = undef,
   )
 {  
-  scaleio::scli::cmd {$ensure:
+  cmd {$ensure:
     action => $ensure, entity => 'protection_domain', value => $name,}
   if $fault_sets {
     $fs_resources = suffix($fault_sets, '1')
-    scaleio::scli::cmd {$fs_resources:
+    cmd {$fs_resources:
       action => $ensure_properties, entity => 'fault_set', value_in_title => true,
       scope_entity => 'protection_domain', scope_value => $name }     
   }
   if $storage_pools {
     $sp_resources = suffix($storage_pools, '2')
-    scaleio::scli::cmd {$sp_resources:
+    cmd {$sp_resources:
       action => $ensure_properties, entity => 'storage_pool', value_in_title => true,
       scope_entity => 'protection_domain', scope_value => $name }     
   }

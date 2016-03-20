@@ -1,6 +1,6 @@
-# == Class: scaleio
+# == Class: scli
 #
-# Full description of class scaleio here.
+# Full description of class scli here.
 #
 # === Parameters
 #
@@ -35,8 +35,14 @@
 #
 # Copyright 2016 Your name here, unless otherwise noted.
 #
-class scaleio {
 
-  # TODO:
-  # Comments and headers everywhere
+define scaleio::login($password)
+{
+  cmd { 'login':
+    action=>'login', ref=>'password', value=>$password,
+    scope_ref=>'username', scope_value=>'admin'
+  }
 }
+
+
+

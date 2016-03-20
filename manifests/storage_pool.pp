@@ -1,4 +1,4 @@
-class scaleio::storage_pool (
+define scaleio::storage_pool (
   $ensure                         = 'present',
   $name,
   $protection_domain,
@@ -14,7 +14,7 @@ class scaleio::storage_pool (
   $rebalance_parallelism_limit    = undef, # int
   )
 {
-  scaleio::scli::cmd {$ensure:
+  cmd {$ensure:
     action => $ensure, entity => 'storage_pool', value => $name,
     scope_entity => 'protection_domain', scope_value => $protection_domain}
   
@@ -58,16 +58,17 @@ class scaleio::storage_pool (
     'disable' => "--scanner_mode ${scanner_mode} --scanner_bandwidth_limit ${scanner_bandwidth_limit}",
     default   => ' '}
 
-  define set($is_defined, $change = ' ')
-  {
-    if $is_defined {
-      scaleio::scli::cmd {$title:
-        action => $title, ref => "storage_pool_name", value => $scaleio::storage_pool::name,
-        scope_entity => 'protection_domain', scope_value => $scaleio::storage_pool::protection_domain,
-        extra_opts => $change}      
-    }
-  }
-    
   # TODO:
   # Rebuild and rebalance policy should be done in separate manifest - too many options and values
 }
+
+define scaleio::set($is_defined, $change = ' ')
+{
+  if $is_defined {
+    cmd {$title:
+      action => $title, ref => "storage_pool_name", value => $scaleio::storage_pool::name,
+      scope_entity => 'protection_domain', scope_value => $scaleio::storage_pool::protection_domain,
+      extra_opts => $change}      
+  }
+}
+    
