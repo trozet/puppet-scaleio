@@ -37,7 +37,7 @@
 #
 class scaleio {
 
-  define scaleio::cluster (
+  define cluster (
 	  $ensure                       = 'present', 
 	  $cluster_mode                 = undef, # 1|3|5
 	  $slave_names                  = undef, # "mdm1,mdm2"
@@ -59,7 +59,7 @@ class scaleio {
     }    
   }
   
-  define scaleio::mdm (
+  define mdm (
 	  $ensure                 = 'present',
 	  $ensure_properties      = 'present',
 	  $name,
@@ -119,7 +119,7 @@ class scaleio {
     }
   }
 
-  class scaleio::storage_pool (
+  define storage_pool (
 	  $ensure                         = 'present',
 	  $name,
 	  $protection_domain,
