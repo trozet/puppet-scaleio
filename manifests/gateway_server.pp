@@ -1,18 +1,14 @@
 class scaleio::gateway_server (
   $ensure       = 'present',
-  $mdm_ips      = undef, # ['1.2.3.4', '1.2.3.5']
+  $mdm_ips      = undef, # "1.2.3.4,1.2.3.5"
   $password     = undef,
   )
 {
   if $ensure == 'absent'
   {
-    service { 'scaleio-gateway':
-      ensure  => 'stopped',
-      enable  => true,
-    } ->
     package { 'emc-scaleio-gateway':
       provider  => dpkg,
-      ensure    => absent}
+      ensure    => 'purged'}
   }
   else {
     Exec { path => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ] }
@@ -45,7 +41,7 @@ class scaleio::gateway_server (
       enable  => true,
     }
     if $mdm_ip {
-      $mdm_ips_str = join($mdm_ips, ';')
+      $mdm_ips_str = join(split($mdm_ips,','), ';')
       file_line { 'Set MDM IP addresses':
         ensure  => present,
         line    => "mdm.ip.addresses=",
