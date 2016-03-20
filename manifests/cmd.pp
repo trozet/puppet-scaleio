@@ -36,16 +36,6 @@
 # Copyright 2016 Your name here, unless otherwise noted.
 #
 
-
-
-define login($password)
-{
-  cmd { 'login':
-    action=>'login', ref=>'password', value=>$password,
-    scope_ref=>'username', scope_value=>'admin'
-  }
-}
-
 # Logic compiling scli command from parameters and invoking it.
 # For actions "add" checks with "query" in unless if such entity exists.
 # Accepts actions "present" and "absent" instead of "add" and "remove".
