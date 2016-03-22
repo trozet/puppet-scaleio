@@ -68,7 +68,7 @@ define cmd(
   # because one different extra character per call allows to differentiate them.
   $val = $value_in_title ? {
     undef => $value,
-    default => chop($title)} 
+    default => chop($title)}
   # Main object parts
   $obj_ref = $entity ? {
     undef =>  "--${ref}",

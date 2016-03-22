@@ -1,7 +1,6 @@
 define scaleio::sds (
   $ensure             = 'present',
   $ensure_properties  = 'present',
-  $name,
   $protection_domain  = undef,
   $fault_set          = undef,
   $port               = undef,
@@ -10,7 +9,7 @@ define scaleio::sds (
   $storage_pools      = undef, # "sp1,sp2"
   $device_paths       = undef, # "/dev/sdb,/dev/sdc"
   )
-{ 
+{
   
   if $ensure == 'present' {
     # TODO:
@@ -22,7 +21,7 @@ define scaleio::sds (
     $fault_set_opts = $fault_set ? {undef => '', default => "--fault_set_name ${fault_set}" }
     $port_opts = $port ? {undef => '', default => "--sds_port ${port}" }
     cmd {$ensure:
-      action => $ensure, entity => 'sds', value => $name, 
+      action => $ensure, entity => 'sds', value => $name,
       scope_entity => 'protection_domain', scope_value => $protection_domain,
       extra_opts => "--sds_ip ${ips} ${port_opts} ${role_opts} ${storage_pool_opts} ${device_path_opts} ${fault_set_opts}"}
   }
@@ -39,7 +38,7 @@ define scaleio::sds (
       cmd {$ip_resources:
         action => 'add_sds_ip', ref => 'new_sds_ip', value_in_title => true,
         scope_entity => 'sds', scope_value => $name,
-        unless_query => 'query_sds --sds_ip'}  
+        unless_query => 'query_sds --sds_ip'}
         
       if $ip_roles {
         $ips_with_roles = hash(flatten(zip($ip_array, split($ip_roles, ','))))
@@ -47,14 +46,14 @@ define scaleio::sds (
         cmd {$ip_role_resources:
           action => 'modify_sds_ip_role', ref => 'sds_ip_to_modify', value_in_title => true,
           scope_entity => 'sds', scope_value => $name,
-          paired_ref => "new_sds_ip_role", paired_hash => $ips_with_roles} 
+          paired_ref => 'new_sds_ip_role', paired_hash => $ips_with_roles}
       }
-    }   
+    }
     elsif $ensure_properties == 'absent' {
       $ip_del_resources = suffix($ip_array, '3')
       cmd {$ip_del_resources:
         action => 'remove_sds_ip', ref => 'sds_ip_to_remove', value_in_title => true,
-        scope_entity => 'sds', scope_value => $name}  
+        scope_entity => 'sds', scope_value => $name}
     }
   }
 
@@ -68,13 +67,13 @@ define scaleio::sds (
         action => 'add_sds_device', ref => 'device_path', value_in_title => true,
         scope_entity => 'sds', scope_value => $name,
         paired_ref => 'storage_pool_name', paired_hash => $devices_with_pools,
-        unless_query => "query_sds --sds_name ${name} | grep"}          
-    }   
+        unless_query => "query_sds --sds_name ${name} | grep"}
+    }
     elsif $ensure_properties == 'absent' {
       $device_del_resources = suffix($device_array, '5')
       cmd {$device_del_resources:
         action => 'remove_sds_device', ref => 'device_path', value_in_title => true,
-        scope_entity => 'sds', scope_value => $name}  
+        scope_entity => 'sds', scope_value => $name}
     }
   }
 

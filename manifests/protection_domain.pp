@@ -14,14 +14,14 @@ define scaleio::protection_domain (
   if $fault_sets {
     cmd {$fs_resources:
       action => $ensure_properties, entity => 'fault_set', value_in_title => true,
-      scope_entity => 'protection_domain', scope_value => $name }     
+      scope_entity => 'protection_domain', scope_value => $name }
   }
   if $storage_pools {
     cmd {$sp_resources:
       action => $ensure_properties, entity => 'storage_pool', value_in_title => true,
-      scope_entity => 'protection_domain', scope_value => $name }     
+      scope_entity => 'protection_domain', scope_value => $name }
   }
-  
+
   # TODO:
   # set_sds_network_limits
 }

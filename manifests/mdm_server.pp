@@ -25,8 +25,8 @@ class scaleio::mdm_server (
     }
     service { ['mdm']:
       ensure => 'running',
-      enable => 'true',
-      hasstatus => 'true',
+      enable => true,
+      hasstatus => true,
       require => Package['emc-scaleio-mdm'],
     }
 
@@ -38,7 +38,7 @@ class scaleio::mdm_server (
       file_line { 'mdm role':
         path   => '/opt/emc/scaleio/mdm/cfg/conf.txt',
         line   => "actor_role_is_manager=${is_manager}",
-        match  => "^actor_role_is_manager",
+        match  => '^actor_role_is_manager',
         notify => Service['mdm'],
         before => [Exec['create_cluster']],
         require => Package['emc-scaleio-mdm'],
