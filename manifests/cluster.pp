@@ -19,7 +19,7 @@ define scaleio::cluster (
   if $new_password {
     cmd {'set password':
       action => 'set_password', ref => 'new_password', value => $new_password,
-      scope_ref => 'old_password', scope_value => $password}
+      scope_ref => 'old_password', scope_value => $password, approve_certificate => ''}
   }
   if $restricted_sdc_mode {
     cmd {'set restricted sdc mode':

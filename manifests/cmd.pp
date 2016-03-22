@@ -54,7 +54,8 @@ define cmd(
   $paired_ref = undef,
   $paired_hash = {},
   $extra_opts = '',
-  $unless_query = undef,)
+  $unless_query = undef,
+  $approve_certificate = "--approve_certificate",)
 {
   # Command
   $cmd = $action ? {
@@ -92,16 +93,17 @@ define cmd(
   $mdm_opts = $::mdm_ips ? {
     undef => '',
     default => "--mdm_ip ${::mdm_ips}"}
-  $command = "scli ${mdm_opts} --approve_certificate ${cmd_opt} ${obj_ref_opt} ${scope_obj_ref_opt} ${paired_obj_ref_opt} ${extra_opts}"
+  $command = "scli ${mdm_opts} ${approve_certificate} ${cmd_opt} ${obj_ref_opt} ${scope_obj_ref_opt} ${paired_obj_ref_opt} ${extra_opts}"
   $unless_cmd = $cmd ? {
-    'add' => "scli ${mdm_opts} --approve_certificate --query_${entity} ${obj_ref_opt} ${scope_obj_ref_opt}",
+    'add' => "scli ${mdm_opts} ${approve_certificate}  --query_${entity} ${obj_ref_opt} ${scope_obj_ref_opt}",
     default => undef}
   # Custom unless query for addition is set - will check existense of the val to be added
   $unless_command = $unless_query ? {
     undef => $unless_cmd,
-    default => "scli ${mdm_opts} --approve_certificate --${unless_query} ${val}"}
+    default => "scli ${mdm_opts} ${approve_certificate}  --${unless_query} ${val}"}
 
-  notify { $command: }
+  notify { "SCLI COMMAND: ${command}": }
+  notify { "SCLI UNLESS: ${unless_command}": }
   exec { $command:
     command => $command,
     path => ['/bin/'],

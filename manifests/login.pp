@@ -40,7 +40,7 @@ define scaleio::login($password)
 {
   cmd { 'login':
     action=>'login', ref=>'password', value=>$password,
-    scope_ref=>'username', scope_value=>'admin'
+    scope_ref=>'username', scope_value=>'admin', approve_certificate=>'',
   }
 }
 
