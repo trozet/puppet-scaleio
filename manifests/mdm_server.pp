@@ -1,6 +1,6 @@
 class scaleio::mdm_server (
   $ensure                   = 'present',
-  $is_manager               = 1,          # 0|1
+  $is_manager               = undef,          # 0|1
   $master_mdm_name          = undef,
   $mdm_ips                  = undef,      # "1.2.3.4,1.2.3.5"
   $mdm_management_ips       = undef,      # "1.2.3.4,1.2.3.5"
@@ -41,7 +41,6 @@ class scaleio::mdm_server (
         match  => "^actor_role_is_manager",
         notify => Service['mdm'],
         before => [Exec['create_cluster']],
-        require => Package['emc-scaleio-mdm'],
       }
     }
 
