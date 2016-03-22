@@ -103,7 +103,9 @@ define cmd(
     default => "scli ${mdm_opts} ${approve_certificate}  --${unless_query} ${val}"}
 
   notify { "SCLI COMMAND: ${command}": }
-  notify { "SCLI UNLESS: ${unless_command}": }
+  if $unless_command {
+    notify { "SCLI UNLESS: ${unless_command}": }
+  }
   exec { $command:
     command => $command,
     path => ['/bin/'],

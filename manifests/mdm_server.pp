@@ -36,11 +36,12 @@ class scaleio::mdm_server (
       #   Puppet's installation processes (apt-get/yum)  don't inherit environment variable MDM_ROLE_IS_MANAGER
       #   that is set up during os_prep.pp execution that leads to all MDMs become TB
       file_line { 'mdm role':
-        path   => '/opt/emc/scaleio/mdm/cfg/conf.txt',
-        line   => "actor_role_is_manager=${is_manager}",
-        match  => "^actor_role_is_manager",
-        notify => Service['mdm'],
-        before => [Exec['create_cluster']],
+        path    => '/opt/emc/scaleio/mdm/cfg/conf.txt',
+        line    => "actor_role_is_manager=${is_manager}",
+        match   => "^actor_role_is_manager",
+        require => Package['emc-scaleio-mdm'],
+        notify  => Service['mdm'],
+        before  => [Exec['create_cluster']],
       }
     }
 

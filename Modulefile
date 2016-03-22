@@ -1,5 +1,5 @@
 name    'cloudscaling-scaleio'
-version '0.1.5'
+version '0.1.6'
 source 'UNKNOWN'
 author 'emc'
 license 'Apache License, Version 2.0'
