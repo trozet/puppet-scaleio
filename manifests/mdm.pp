@@ -1,7 +1,6 @@
 define scaleio::mdm (
   $ensure                 = 'present',
   $ensure_properties      = 'present',
-  $name,
   $role                   = 'manager',  # manager|tb
   $port                   = undef,
   $ips                    = undef,      # "1.2.3.4,1.2.3.5"

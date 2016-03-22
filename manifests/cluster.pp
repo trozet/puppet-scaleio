@@ -1,5 +1,5 @@
 define scaleio::cluster (
-  $ensure                       = 'present', 
+  $ensure                       = 'present',
   $cluster_mode                 = undef, # 1|3|5
   $slave_names                  = undef, # "mdm1,mdm2"
   $tb_names                     = undef, # "tb1,tb2"
@@ -9,13 +9,13 @@ define scaleio::cluster (
   $license_file_path            = undef,
   $remote_readonly_limit_state  = undef, # enabled|disabled
   )
-{ 
+{
   if $cluster_mode {
     $action = $ensure ? {'absent' => 'remove', default => 'add'}
     cmd {'switch cluster mode':
       action => 'switch_cluster_mode', ref => 'cluster_mode', value => "${cluster_mode}_node",
-      extra_opts => "--${action}_slave_mdm_name ${slave_names} --${action}_tb_name ${tb_names} --i_am_sure"}   
-  }  
+      extra_opts => "--${action}_slave_mdm_name ${slave_names} --${action}_tb_name ${tb_names} --i_am_sure"}
+  }
   if $new_password {
     cmd {'set password':
       action => 'set_password', ref => 'new_password', value => $new_password,
@@ -33,7 +33,7 @@ define scaleio::cluster (
     cmd {'set remote readonly limit state':
       action => 'set', entity => 'remote_readonly_limit_state', value => $remote_readonly_limit_state}
   }
-  
+
   # TODO:
   # Replace cluster mdm
   # Users, Volumes, Certificates, Caches

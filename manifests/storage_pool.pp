@@ -1,7 +1,6 @@
 define scaleio::storage_pool (
   $ensure                         = 'present',
-  $name,
-  $protection_domain,
+  $protection_domain              = undef,
   $checksum_mode                  = undef, # enable|disable
   $rmcache_usage                  = undef, # use|dont_use
   $rmcache_write_handling_mode    = undef, # cached|passthrough,
@@ -50,7 +49,7 @@ define scaleio::storage_pool (
     is_defined => $rebalance_parallelism_limit,
     change => "--limit ${rebalance_parallelism_limit}"}
     
-  set { "${scanner_mode}_background_device_scanner": 
+  set { "${scanner_mode}_background_device_scanner":
     is_defined => $scanner_mode != '',
     change => $scanner_mode_change }
         
@@ -66,9 +65,10 @@ define scaleio::set($is_defined, $change = ' ')
 {
   if $is_defined {
     cmd {$title:
-      action => $title, ref => "storage_pool_name", value => $scaleio::storage_pool::name,
+      action => $title, ref => 'storage_pool_name', value => $scaleio::storage_pool::name,
       scope_entity => 'protection_domain', scope_value => $scaleio::storage_pool::protection_domain,
-      extra_opts => $change}      
+      extra_opts => $change
+    }
   }
 }
     

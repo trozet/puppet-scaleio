@@ -5,8 +5,8 @@ class scaleio::gui_server (
   if $ensure == 'absent'
   {
     package { 'emc_scaleio_gui':
+      ensure    => absent,
       provider  => dpkg,
-      ensure    => absent
     }
   }
   else {

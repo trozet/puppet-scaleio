@@ -55,7 +55,7 @@ define cmd(
   $paired_hash = {},
   $extra_opts = '',
   $unless_query = undef,
-  $approve_certificate = "--approve_certificate",)
+  $approve_certificate = '--approve_certificate',)
 {
   # Command
   $cmd = $action ? {
@@ -69,7 +69,7 @@ define cmd(
   # because one different extra character per call allows to differentiate them.
   $val = $value_in_title ? {
     undef => $value,
-    default => chop($title)} 
+    default => chop($title)}
   # Main object parts
   $obj_ref = $entity ? {
     undef =>  "--${ref}",
