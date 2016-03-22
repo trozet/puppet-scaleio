@@ -1,4 +1,5 @@
 define scaleio::mdm (
+  $name,
   $ensure                 = 'present',
   $ensure_properties      = 'present',
   $role                   = 'manager',  # manager|tb

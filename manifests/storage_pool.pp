@@ -1,4 +1,5 @@
 define scaleio::storage_pool (
+  $name,
   $ensure                         = 'present',
   $protection_domain              = undef,
   $checksum_mode                  = undef, # enable|disable

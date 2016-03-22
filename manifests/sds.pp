@@ -1,4 +1,5 @@
 define scaleio::sds (
+  $name,
   $ensure             = 'present',
   $ensure_properties  = 'present',
   $protection_domain  = undef,
