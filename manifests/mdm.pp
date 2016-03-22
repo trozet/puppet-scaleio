@@ -11,7 +11,7 @@ define scaleio::mdm (
   if $ensure == 'present' {
     $management_ip_opts = $management_ips ? {undef => '', default => "--new_mdm_management_ip ${management_ips}" }
     $port_opts = $port ? {undef => '', default => "--new_mdm_port ${port}" }
-    cmd {$ensure:
+    cmd {"${name} ${ensure}":
       action => 'add_standby_mdm', ref => 'new_mdm_name', value => $name,
       scope_ref => 'mdm_role', scope_value => $role,
       extra_opts => "--new_mdm_ip ${ips} ${port_opts} ${management_ip_opts}",
@@ -23,7 +23,7 @@ define scaleio::mdm (
   }
 
   if $management_ips {
-    cmd {$ensure_properties:
+    cmd {"properties ${name} ${ensure_properties}":
       action => 'modify_management_ip', ref => 'target_mdm_name', value => $name,
       extra_opts => "--new_mdm_management_ip ${management_ips}"}
   }
