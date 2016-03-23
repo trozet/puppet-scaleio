@@ -14,7 +14,9 @@ define scaleio::cluster (
     $action = $ensure ? {'absent' => 'remove', default => 'add'}
     cmd {'switch cluster mode':
       action => 'switch_cluster_mode', ref => 'cluster_mode', value => "${cluster_mode}_node",
-      extra_opts => "--${action}_slave_mdm_name ${slave_names} --${action}_tb_name ${tb_names} --i_am_sure"}
+      extra_opts => "--${action}_slave_mdm_name ${slave_names} --${action}_tb_name ${tb_names} --i_am_sure",
+      unless_query => 'query_cluster | grep -A 1 "Cluster:" | grep'
+    }
   }
   if $new_password {
     cmd {'set password':
