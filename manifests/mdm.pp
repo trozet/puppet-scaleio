@@ -15,7 +15,7 @@ define scaleio::mdm (
       action => 'add_standby_mdm', ref => 'new_mdm_name', value => $name,
       scope_ref => 'mdm_role', scope_value => $role,
       extra_opts => "--new_mdm_ip ${ips} ${port_opts} ${management_ip_opts}",
-      unless_query => "query_cluster | grep ${name}"}
+      unless_query => "query_cluster | grep"}
   }
   elsif $ensure == 'absent' {
     cmd {$ensure:
