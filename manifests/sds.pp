@@ -45,13 +45,10 @@ define scaleio::sds (
         if $ip_roles {
           $ips_with_roles = hash(flatten(zip($ip_array, split($ip_roles, ','))))
           $ip_role_resources = suffix($ip_array, '2')
-          # TODO: hardcoded role all in unless_query, do somthing with that
-          $grep_query = 'grep -i "\([0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\)\([ ]\+Role: \)\(all\)" | grep'
           cmd {$ip_role_resources:
             action => 'modify_sds_ip_role', ref => 'sds_ip_to_modify', value_in_title => true,
             scope_entity => 'sds', scope_value => $name,
             paired_ref => 'new_sds_ip_role', paired_hash => $ips_with_roles,
-            unless_query => "query_sds --sds_name ${name} | ${grep_query}",
             require => Cmd[$sds_resource_title] }
         }
       }
