@@ -38,7 +38,7 @@
 
 define scaleio::login($password)
 {
-  cmd { "${name} login":
+  cmd { "${title} login":
     action=>'login', ref=>'password', value=>$password,
     scope_ref=>'username', scope_value=>'admin', approve_certificate=>'',
   }

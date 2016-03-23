@@ -23,7 +23,7 @@ define scaleio::mdm (
   }
 
   if $management_ips {
-    cmd {"properties ${name} ${ensure_properties}":
+    cmd {"properties ${title} ${ensure_properties}":
       action => 'modify_management_ip', ref => 'target_mdm_name', value => $name,
       extra_opts => "--new_mdm_management_ip ${management_ips}"}
   }
