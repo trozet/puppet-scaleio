@@ -13,7 +13,7 @@ define scaleio::protection_domain (
     cmd {$fs_resources:
       action => $ensure_properties, entity => 'fault_set', value_in_title => true,
       scope_entity => 'protection_domain', scope_value => $name,
-      require => Cmd['$ensure'],
+      require => Cmd["Protection domain ${title} ${ensure}"],
     }
   }
   if $storage_pools {
@@ -21,7 +21,7 @@ define scaleio::protection_domain (
     cmd {$sp_resources:
       action => $ensure_properties, entity => 'storage_pool', value_in_title => true,
       scope_entity => 'protection_domain', scope_value => $name,
-      require => Cmd['$ensure'],
+      require => Cmd["Protection domain ${title} ${ensure}"],
     }
   }
 

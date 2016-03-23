@@ -13,7 +13,7 @@ class scaleio::mdm_server (
   }
   else {
     firewall { '001 Open Ports 6611 and 9011 for ScaleIO MDM':
-      dport   => [6611, 9011, 443],
+      dport   => [6611, 9011],
       proto  => tcp,
       action => accept,
     }

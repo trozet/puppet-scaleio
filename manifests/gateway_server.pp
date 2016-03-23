@@ -2,6 +2,7 @@ class scaleio::gateway_server (
   $ensure       = 'present',
   $mdm_ips      = undef, # "1.2.3.4,1.2.3.5"
   $password     = undef,
+  $port         = 4443,
   )
 {
   if $ensure == 'absent'
@@ -14,7 +15,7 @@ class scaleio::gateway_server (
   else {
     Exec { path => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ] }
     firewall { '001 for ScaleIO Gateway':
-      dport  => [443],
+      dport  => [$port],
       proto  => tcp,
       action => accept,
     }
@@ -37,7 +38,21 @@ class scaleio::gateway_server (
     } ->
     package { 'emc-scaleio-gateway':
         ensure  => installed,
-    }
+    } ->
+    file_line { 'Set security bypass':
+      ensure  => present,
+      line    => "security.bypass_certificate_check=true",
+      path    => '/opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties',
+      match   => '^security.bypass_certificate_check=',
+      require => Package['emc-scaleio-gateway'],
+    } ->
+    file_line { 'Set gateway port':
+      ensure  => present,
+      line    => "ssl.port={$port}",
+      path    => '/opt/emc/scaleio/gateway/conf/catalina.properties',
+      match   => "^ssl.port=",
+      require => Package['emc-scaleio-gateway'],
+    } ~>
     service { 'scaleio-gateway':
       ensure  => 'running',
       enable  => true,
@@ -46,7 +61,7 @@ class scaleio::gateway_server (
       $mdm_ips_str = join(split($mdm_ips,','), ';')
       file_line { 'Set MDM IP addresses':
         ensure  => present,
-        line    => 'mdm.ip.addresses=',
+        line    => "mdm.ip.addresses={$mdm_ips_str}",
         path    => '/opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties',
         match   => '^mdm.ip.addresses=.*',
         require => Package['emc-scaleio-gateway'],
