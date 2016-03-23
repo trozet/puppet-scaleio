@@ -6,7 +6,7 @@ define scaleio::protection_domain (
   $storage_pools      = undef,
   )
 {
-  cmd {'$ensure':
+  cmd {"Protection domain ${title} ${ensure}":
     action => $ensure, entity => 'protection_domain', value => $name,}
   if $fault_sets {
     $fs_resources = suffix($fault_sets, '1')
