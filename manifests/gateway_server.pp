@@ -24,7 +24,7 @@ class scaleio::gateway_server (
     } ->
     # Below are a java 1.8 installation steps which shouldn't be required for newer Ubuntu versions
     exec { 'add java8 repo':
-      unless  => 'apt-cache search oracle-java8-installer || grep "webupd8team/java" /etc/apt/sources.list /etc/apt/sources.list.d/*',
+      unless  => 'apt-cache search oracle-java8-installer | grep oracle-java8-installer || grep "webupd8team/java" /etc/apt/sources.list /etc/apt/sources.list.d/*',
       command => 'add-apt-repository ppa:webupd8team/java && apt-get update',
     } ->
     exec { 'java license accepting step 1':
