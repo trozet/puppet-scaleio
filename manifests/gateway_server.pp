@@ -65,6 +65,7 @@ class scaleio::gateway_server (
         path    => '/opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties',
         match   => '^mdm.ip.addresses=.*',
         require => Package['emc-scaleio-gateway'],
+        notify  => Service['scaleio-gateway']
       }
     }
     if $password {
