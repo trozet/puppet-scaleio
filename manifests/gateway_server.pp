@@ -48,7 +48,7 @@ class scaleio::gateway_server (
     } ->
     file_line { 'Set gateway port':
       ensure  => present,
-      line    => "ssl.port={$port}",
+      line    => "ssl.port=${port}",
       path    => '/opt/emc/scaleio/gateway/conf/catalina.properties',
       match   => "^ssl.port=",
       require => Package['emc-scaleio-gateway'],
@@ -57,11 +57,11 @@ class scaleio::gateway_server (
       ensure  => 'running',
       enable  => true,
     }
-    if $mdm_ip {
+    if $mdm_ips {
       $mdm_ips_str = join(split($mdm_ips,','), ';')
       file_line { 'Set MDM IP addresses':
         ensure  => present,
-        line    => "mdm.ip.addresses={$mdm_ips_str}",
+        line    => "mdm.ip.addresses=${mdm_ips_str}",
         path    => '/opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties',
         match   => '^mdm.ip.addresses=.*',
         require => Package['emc-scaleio-gateway'],
