@@ -5,6 +5,6 @@ define scaleio::sdc (
 {
   if $ensure == 'absent' {
     cmd {$ensure:
-      action => 'remove_sdc', ref => 'sdc_ip', value => $ip,}
+      action => 'remove_sdc', ref => 'sdc_ip', value => $ip, extra_opts => '--i_am_sure'}
   }
 }
