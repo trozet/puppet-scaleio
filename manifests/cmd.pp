@@ -65,11 +65,16 @@ define cmd(
   $cmd_opt = $entity ? {
     undef =>  "--${cmd}",
     default => "--${cmd}_${entity}"}
-  # Taking title for value for array values. Chop is used to extract ips from resources
+  # Taking title for value for array values. Split is used to extract ips from resources
   # because one different extra character per call allows to differentiate them.
-  $val = $value_in_title ? {
-    undef => $value,
-    default => chop($title)}
+  # In case of title parameters look like 'parameter,suffix", suffix is just for 
+  # avoiding resource duplication.
+  if $value_in_title {
+    $val_ = split($title, ',')
+    $val = $val_[0]
+  } else {
+    $val = $value
+  }
   # Main object parts
   $obj_ref = $entity ? {
     undef =>  "--${ref}",

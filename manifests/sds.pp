@@ -35,7 +35,7 @@ define scaleio::sds (
       $ip_array = split($ips, ',')
 
       if $ensure_properties == 'present' {
-        $ip_resources = suffix($ip_array, '1')
+        $ip_resources = suffix($ip_array, ",${name}1")
         cmd {$ip_resources:
           action => 'add_sds_ip', ref => 'new_sds_ip', value_in_title => true,
           scope_entity => 'sds', scope_value => $name,
@@ -44,7 +44,7 @@ define scaleio::sds (
 
         if $ip_roles {
           $ips_with_roles = hash(flatten(zip($ip_array, split($ip_roles, ','))))
-          $ip_role_resources = suffix($ip_array, '2')
+          $ip_role_resources = suffix($ip_array, ",${name}2")
           cmd {$ip_role_resources:
             action => 'modify_sds_ip_role', ref => 'sds_ip_to_modify', value_in_title => true,
             scope_entity => 'sds', scope_value => $name,
@@ -53,7 +53,7 @@ define scaleio::sds (
         }
       }
       elsif $ensure_properties == 'absent' {
-        $ip_del_resources = suffix($ip_array, '3')
+        $ip_del_resources = suffix($ip_array, ",${name}3")
         cmd {$ip_del_resources:
           action => 'remove_sds_ip', ref => 'sds_ip_to_remove', value_in_title => true,
           scope_entity => 'sds', scope_value => $name,
@@ -65,7 +65,7 @@ define scaleio::sds (
       $device_array = split($device_paths, ',')
 
       if $ensure_properties == 'present' {
-        $device_resources = suffix($device_array, '4')
+        $device_resources = suffix($device_array, ",${name}4")
         $devices_with_pools = hash(flatten(zip($device_array, split($storage_pools, ','))))
         cmd {$device_resources:
           action => 'add_sds_device', ref => 'device_path', value_in_title => true,
@@ -75,7 +75,7 @@ define scaleio::sds (
           require => Cmd[$sds_resource_title] }
       }
       elsif $ensure_properties == 'absent' {
-        $device_del_resources = suffix($device_array, '5')
+        $device_del_resources = suffix($device_array, ",${name}5")
         cmd {$device_del_resources:
           action => 'remove_sds_device', ref => 'device_path', value_in_title => true,
           scope_entity => 'sds', scope_value => $name,
