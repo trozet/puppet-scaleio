@@ -1,11 +1,14 @@
+# MDM configuration
+# requires FACTER ::mdm_ips to be set if not run from master MDM
+
 define scaleio::mdm (
-  $name,
-  $ensure                 = 'present',
-  $ensure_properties      = 'present',
-  $role                   = 'manager',  # manager|tb
-  $port                   = undef,
-  $ips                    = undef,      # "1.2.3.4,1.2.3.5"
-  $management_ips         = undef,      # "1.2.3.4,1.2.3.5"
+  $name,                                # string - MDM name
+  $ensure                 = 'present',  # present|absent - Install or remove standby MDM in cluster
+  $ensure_properties      = 'present',  # present|absent - Change or remove properties in MDM
+  $role                   = 'manager',  # 'manager'|'tb' - Specify role of the MDM when adding to cluster
+  $port                   = undef,      # int - Specify port when adding to cluster
+  $ips                    = undef,      # string - Specify IPs when adding to cluster
+  $management_ips         = undef,      # string - Specify management IPs for cluster or change later
   )
 {
   if $ensure == 'present' {

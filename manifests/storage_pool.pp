@@ -1,17 +1,20 @@
+# Storage Pool configuration
+# requires FACTER ::mdm_ips to be set if not run from master MDM
+
 define scaleio::storage_pool (
-  $name,
-  $ensure                         = 'present',
-  $protection_domain              = undef,
-  $checksum_mode                  = undef, # enable|disable
-  $rmcache_usage                  = undef, # use|dont_use
-  $rmcache_write_handling_mode    = undef, # cached|passthrough,
-  $rebuild_mode                   = undef, # enable|disable
-  $rebalance_mode                 = undef, # enable|disable
-  $scanner_mode                   = '',    # device_only|data_comparison|disable
-  $scanner_bandwidth_limit        = undef, # int
-  $spare_percentage               = undef, # int
-  $zero_padding_policy            = undef, # enable|disable
-  $rebalance_parallelism_limit    = undef, # int
+  $name,                                        # string - Storage pool name
+  $ensure                         = 'present',  # present|absent - Add or remove storage pool
+  $protection_domain              = undef,      # string - Protection domain name
+  $checksum_mode                  = undef,      # 'enable'|'disable'
+  $rmcache_usage                  = undef,      # 'use'|'dont_use'
+  $rmcache_write_handling_mode    = undef,      # 'cached'|'passthrough'
+  $rebuild_mode                   = undef,      # 'enable'|'disable'
+  $rebalance_mode                 = undef,      # 'enable'|'disable'
+  $scanner_mode                   = '',         # 'device_only'|'data_comparison'|'disable'
+  $scanner_bandwidth_limit        = undef,      # int
+  $spare_percentage               = undef,      # int
+  $zero_padding_policy            = undef,      # 'enable'|'disable'
+  $rebalance_parallelism_limit    = undef,      # int
   )
 {
   cmd {$ensure:

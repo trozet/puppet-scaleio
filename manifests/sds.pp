@@ -1,14 +1,17 @@
+# SDS configuration
+# requires FACTER ::mdm_ips to be set if not run from master MDM
+
 define scaleio::sds (
-  $name,
-  $ensure             = 'present',
-  $ensure_properties  = 'present',
-  $protection_domain  = undef,
-  $fault_set          = undef,
-  $port               = undef,
-  $ips                = undef, # "1.2.3.4,1.2.3.5"
-  $ip_roles           = undef, # "all,all"
-  $storage_pools      = undef, # "sp1,sp2"
-  $device_paths       = undef, # "/dev/sdb,/dev/sdc"
+  $name,                            # string - SDS name
+  $ensure             = 'present',  # present|absent - Add or remove SDS to cluster
+  $ensure_properties  = 'present',  # present|absent - Add or remove SDS properties
+  $protection_domain  = undef,      # string - Protection domain to specify when adding to cluster
+  $fault_set          = undef,      # string - Fault set
+  $port               = undef,      # int - SDS Port
+  $ips                = undef,      # string - List of SDS IPs
+  $ip_roles           = undef,      # string - List of all|sdc_only|sds_only like 'all,sdc_only,sds_only'
+  $storage_pools      = undef,      # string - List of storage pools
+  $device_paths       = undef,      # string - List of device paths in the same order as pools above
   )
 {
   

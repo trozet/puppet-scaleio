@@ -1,16 +1,20 @@
+# Configure ScaleIO cluster nodes, and cluster parameters.
+# requires FACTER ::mdm_ips to be set if not run from master MDM
+
 define scaleio::cluster (
-  $ensure                       = 'present',
-  $cluster_mode                 = undef, # 1|3|5
-  $slave_names                  = undef, # "mdm1,mdm2"
-  $tb_names                     = undef, # "tb1,tb2"
-  $password                     = undef,
-  $new_password                 = undef,
-  $restricted_sdc_mode          = undef, # enabled|disabled
-  $license_file_path            = undef,
-  $remote_readonly_limit_state  = undef, # enabled|disabled
+  $ensure                       = 'present',  # present|absent - Create or destroy cluster
+  $cluster_mode                 = undef,      # 1|3|5 - Cluster mode
+  $slave_names                  = undef,      # string - List of MDM slaves to add or remove
+  $tb_names                     = undef,      # string - List of tiebreakers to add or remove
+  $password                     = undef,      # string - Current password
+  $new_password                 = undef,      # string - New password
+  $restricted_sdc_mode          = undef,      # 'enabled'|'disabled' - Restricted SDC mode
+  $license_file_path            = undef,      # string - Path to license file
+  $remote_readonly_limit_state  = undef,      # 'enabled'|'disabled' - Remote readonly limit state
   )
 {
   if $cluster_mode {
+    # Cluster mode changed
     $action = $ensure ? {'absent' => 'remove', default => 'add'}
     cmd {'switch cluster mode':
       action => 'switch_cluster_mode', ref => 'cluster_mode', value => "${cluster_mode}_node",
@@ -39,4 +43,5 @@ define scaleio::cluster (
   # TODO:
   # Replace cluster mdm
   # Users, Volumes, Certificates, Caches
+  # Password can be changed only with current password - can be done by resetting with only new password
 }

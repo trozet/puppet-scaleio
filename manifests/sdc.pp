@@ -1,6 +1,9 @@
+# SDC configuration
+# requires FACTER ::mdm_ips to be set if not run from master MDM
+
 define scaleio::sdc (
-  $ip,
-  $ensure = 'present',
+  $ip,                  # string - IP to specify SDC in cluster
+  $ensure = 'present',  # present|absent - 'absent' removes SDC from cluster
   )
 {
   if $ensure == 'absent' {

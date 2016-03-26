@@ -1,6 +1,8 @@
+# Configure ScaleIO SDC service installation
+
 class scaleio::sdc_server (
-  $ensure  = 'present',
-  $mdm_ip  = undef,     # "1.2.3.4,1.2.3.5"
+  $ensure  = 'present', # present|absent - Install or remove SDC service
+  $mdm_ip  = undef,     # string - List of MDM IPs
   )
 {
   package { ['numactl', 'libaio1']:
@@ -19,4 +21,5 @@ class scaleio::sdc_server (
 
   # TODO:
   # "absent" cleanup
+  # Rename mdm_ip to mdm_ips
 }

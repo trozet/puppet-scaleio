@@ -1,9 +1,11 @@
+# Configure ScaleIO Gateway service installation
+
 class scaleio::mdm_server (
-  $ensure                   = 'present',
-  $is_manager               = undef,          # 0|1
-  $master_mdm_name          = undef,
-  $mdm_ips                  = undef,      # "1.2.3.4,1.2.3.5"
-  $mdm_management_ips       = undef,      # "1.2.3.4,1.2.3.5"
+  $ensure                   = 'present',  # present|absent - Install or remove MDM service
+  $is_manager               = undef,      # 0|1 - Tiebreaker or Manager
+  $master_mdm_name          = undef,      # string - Name of the master node
+  $mdm_ips                  = undef,      # string - MDM IPs
+  $mdm_management_ips       = undef,      # string - MDM management IPs
   )
 {
   if $ensure == 'absent' {
@@ -31,10 +33,6 @@ class scaleio::mdm_server (
     }
 
     if $is_manager != undef {
-      # Workaround:
-      #   Explicitly add the MDM role setting into the config file because
-      #   Puppet's installation processes (apt-get/yum)  don't inherit environment variable MDM_ROLE_IS_MANAGER
-      #   that is set up during os_prep.pp execution that leads to all MDMs become TB
       file_line { 'mdm role':
         path    => '/opt/emc/scaleio/mdm/cfg/conf.txt',
         line    => "actor_role_is_manager=${is_manager}",
@@ -54,7 +52,7 @@ class scaleio::mdm_server (
     exec { 'create_cluster':
       onlyif => "test -n '${master_mdm_name}'",
       require => Service['mdm'],
-      # sleep is needed here because service in role changing can be still alive and not restarted
+      # Sleep is needed here because service in role changing can be still alive and not restarted
       command => "sleep 2 ; scli --query_cluster --approve_certificate || scli ${opts} --master_mdm_name ${master_mdm_name} --master_mdm_ip ${mdm_ips} ${management_ip_opts}",
       path => '/bin:/usr/bin',
       tries => 5,
@@ -64,4 +62,5 @@ class scaleio::mdm_server (
 
   # TODO:
   # "absent" cleanup
+  # Configure ports
 }

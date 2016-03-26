@@ -1,5 +1,7 @@
+# Configure ScaleIO SDS service installation
+
 class scaleio::sds_server (
-  $ensure = 'present',
+  $ensure = 'present',  # present|absent - Install or remove SDS service
   )
 {
   firewall { '001 Open Port 7072 for ScaleIO SDS':

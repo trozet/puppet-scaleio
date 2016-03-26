@@ -1,5 +1,7 @@
+# Configure ScaleIO GUI installation
+
 class scaleio::gui_server (
-  $ensure = 'present',
+  $ensure = 'present',  # present|absent - Install or remove GUI
 )
 {
   if $ensure == 'absent'

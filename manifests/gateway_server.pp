@@ -1,8 +1,10 @@
+# Configure ScaleIO Gateway service installation
+
 class scaleio::gateway_server (
-  $ensure       = 'present',
-  $mdm_ips      = undef, # "1.2.3.4,1.2.3.5"
-  $password     = undef,
-  $port         = 4443,
+  $ensure       = 'present',  # present|absent - Install or remove Gateway service
+  $mdm_ips      = undef,      # string - List of MDM IPs
+  $password     = undef,      # string - Password for Gateway
+  $port         = 4443,       # int - Port for gateway
   )
 {
   if $ensure == 'absent'
@@ -80,5 +82,5 @@ class scaleio::gateway_server (
 
   # TODO:
   # "absent" cleanup
-  # try installing java by puppet install module puppetlabs-java
+  # try installing java by puppet install module puppetlabs-java - problem is Java in Ubuntu 14.04 is incompatible
 }

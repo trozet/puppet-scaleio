@@ -1,60 +1,23 @@
-# == Class: scli
-#
-# Full description of class scli here.
-#
-# === Parameters
-#
-# Document parameters here.
-#
-# [*sample_parameter*]
-#   Explanation of what this parameter affects and what it defaults to.
-#   e.g. "Specify one or more upstream ntp servers as an array."
-#
-# === Variables
-#
-# Here you should define a list of variables that this module would require.
-#
-# [*sample_variable*]
-#   Explanation of how this variable affects the funtion of this class and if
-#   it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#   External Node Classifier as a comma separated list of hostnames." (Note,
-#   global variables should be avoided in favor of class parameters as
-#   of Puppet 2.6.)
-#
-# === Examples
-#
-#  class { scaleio:
-#    servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#  }
-#
-# === Authors
-#
-# Author Name <author@domain.com>
-#
-# === Copyright
-#
-# Copyright 2016 Your name here, unless otherwise noted.
-#
-
 # Logic compiling scli command from parameters and invoking it.
 # For actions "add" checks with "query" in unless if such entity exists.
 # Accepts actions "present" and "absent" instead of "add" and "remove".
 # Supports calling with arrays for values, in which case $value shouldn't
 # be used, instead $value_in_title flag should be set.
 # facter mdm_ips variable should be set to "ip1,ip2,...".
+
 define cmd(
-  $action,
-  $entity = undef,
-  $ref = 'name',
-  $value = undef,
-  $scope_entity = undef,
-  $scope_ref = 'name',
-  $scope_value = undef,
-  $value_in_title = undef,
-  $paired_ref = undef,
-  $paired_hash = {},
-  $extra_opts = '',
-  $unless_query = undef,
+  $action,                  # Action like present|absent|add|remove|add_sds|... if entity specified it's added to --action_entity
+  $entity = undef,          # Entity for the action like --action_entity --entity_name
+  $ref = 'name',            # Type of the reference for entity like --entity_ref or full reference if entity omitted.
+  $value = undef,           # Value - Value for the entity like --action_entity --entity_ref value, or --action --ref value
+  $scope_entity = undef,    # Scope Entity - Scope for the Entity like Protection domain for Storage pools - same rules as above.
+  $scope_ref = 'name',      # Scope reference
+  $scope_value = undef,     # Scope Value
+  $value_in_title = undef,  # Flag to use value from $title - pass it with true for this instead of $value
+  $paired_ref = undef,      # For arrays of titles used as a ref for value in paired_hash like for --new_sds_ip_role
+  $paired_hash = {},        # Hash of values for arrays of titles
+  $extra_opts = '',         # String with any extra options like '--i_am_sure'
+  $unless_query = undef,    # Explicit unless like "query_sds --sds_name ${name} | grep" without value at the end or implicit for add commands
   $approve_certificate = '--approve_certificate',)
 {
   # Command

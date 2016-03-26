@@ -1,9 +1,12 @@
+# Protection Domain configuration
+# requires FACTER ::mdm_ips to be set if not run from master MDM
+
 define scaleio::protection_domain (
-  $name,
-  $ensure             = 'present',
-  $ensure_properties  = 'present',
-  $fault_sets         = undef,
-  $storage_pools      = undef,
+  $name,                            # string - Name of protection domain
+  $ensure             = 'present',  # present|absent - Add or remove protection domain
+  $ensure_properties  = 'present',  # present|absent - Add or remove protection domain properties
+  $fault_sets         = undef,      # [string] - Array of fault sets 
+  $storage_pools      = undef,      # [string] - Array of storage pools
   )
 {
   cmd {"Protection domain ${title} ${ensure}":
