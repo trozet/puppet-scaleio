@@ -73,8 +73,8 @@ All resource declarations are idempotent - they can be repeated as many times as
 
 Example of deployment for 3 nodes MDM and 3 nodes SDS cluster is below:
 
-It's possible to deploy from local directory by the command:
-  puppet apply --modulepath="/home/user/charms/:/etc/puppet/modules" -e "command"
+It's possible to deploy from local directory by the command (replace <my_puppet_dir> with the place where your puppet is):
+  puppet apply --modulepath="/<my_puppet_dir>:/etc/puppet/modules" -e "command"
 
 1. Deploy servers. Each puppet should be run on a machine where this service should reside (in any order or in parallel):
 
