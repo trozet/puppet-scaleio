@@ -16,7 +16,15 @@ class scaleio::sdc_server (
       command => "drv_cfg --add_mdm --ip ${mdm_ip}",
       path => '/opt/emc/scaleio/sdc/bin:/bin',
       require => Package['emc-scaleio-sdc'],
-      onlyif => "drv_cfg --query_mdms | grep 'Retrieved 0'"}
+      onlyif => "drv_cfg --query_mdms | grep 'Retrieved 0'"
+    } ->
+    file_line { 'Set MDM IP addresses in drv_cfg.txt':
+      ensure  => present,
+      line    => "mdm ${mdm_ip}",
+      path    => '/bin/emc/scaleio/drv_cfg.txt',
+      match   => '^mdm .*',
+      require => Package['emc-scaleio-sdc'],
+    }
   }
 
   # TODO:
