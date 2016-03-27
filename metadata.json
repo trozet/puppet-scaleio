@@ -2,23 +2,23 @@
   "author": "cloudscaling",
   "name": "cloudscaling-scaleio",
   "summary": "Puppet library for Scaleio 2.0 deployment and configuration",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "license": "Apache License, Version 2.0",
   "source": "https://github.com/cloudscaling/puppet-scaleio",
   "project_page": "https://github.com/cloudscaling/puppet-scaleio",
   "issues_url": "https://github.com/cloudscaling/puppet-scaleio/issues",
   "dependencies": [
-  	{"name":"puppetlabs-firewall","version_requirement":">= 1.1.3"},
+    {"name":"puppetlabs-firewall","version_requirement":">= 1.1.3"},
     {"name":"puppetlabs-stdlib","version_requirement":">= 4.3.2"}
   ],
   "operatingsystem_support": [
-  	{
-  	  "operatingsystemrelease": ["14"],
-      "operatingsystem": "Ubuntu"  
+    {
+      "operatingsystemrelease": ["14"],
+      "operatingsystem": "Ubuntu"
     }
   ],
   "requirements": [
-  	{
+    {
       "version_requirement": ">= 3.7.4",
       "name": "puppet"
     }
