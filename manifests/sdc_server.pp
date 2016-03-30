@@ -13,12 +13,57 @@ class scaleio::sdc_server (
 	    unless => "drv_cfg --query_mdms | grep ${title}"
 	  } 
 	}
+	
+  define scini_sync($config) {
+    file_line { "scini_sync ${title}":
+      ensure  => present,
+      path    => '/bin/emc/scaleio/scini_sync/driver_sync.conf',
+      match   => "^${title}",
+      line    => "${title}=${config[$title]}",	  
+    }	
+  }
   
+  $scini_sync_conf = {
+    repo_address        => 'ftp://ftp.emc.com',
+    repo_user           => 'QNzgdxXix',
+    repo_password       => 'Aw3wFAwAq3',
+    local_dir           => '/bin/emc/scaleio/scini_sync/driver_cache/',
+    module_sigcheck     => 1,
+    emc_public_gpg_key  => '/bin/emc/scaleio/scini_sync/RPM-GPG-KEY-ScaleIO',
+    repo_public_rsa_key => '/bin/emc/scaleio/scini_sync/scini_repo_key.pub',
+    sync_pattern        => ".*",
+  }
+  $scini_sync_keys = keys($scini_sync_conf)
+
   package { ['numactl', 'libaio1']:
     ensure => installed,
   } ->
   package { ['emc-scaleio-sdc']:
     ensure => $ensure,
+  } ->
+  file { '/bin/emc/scaleio/scini_sync/RPM-GPG-KEY-ScaleIO':
+    ensure => $ensure,
+    source => "puppet:///modules/scaleio/RPM-GPG-KEY-ScaleIO",
+    mode  => '0644',
+    owner => 'root',
+    group => 'root',
+  } ->
+  exec { 'scaleio repo public key':
+    command => 'ssh-keyscan ftp.emc.com 2>/dev/null | grep ssh-rsa > /bin/emc/scaleio/scini_sync/scini_repo_key.pub',
+    path    => ['/bin/', '/usr/bin', '/sbin']
+  } ->
+  scini_sync{$scini_sync_keys:
+    config => $scini_sync_conf
+  } ->
+  exec { 'scini sync and update':
+    command => 'update_driver_cache.sh && verify_driver.sh',
+    unless  => 'verify_driver.sh',
+    path    => ['/bin/emc/scaleio/scini_sync/', '/bin/', '/usr/bin', '/sbin']
+  } ->
+  exec { 'scini driver load':
+    command => 'insmod /bin/emc/scaleio/scini.ko',
+    unless  => 'lsmod | grep scini',
+    path    => ['/bin/', '/usr/bin', '/sbin']
   }
   if $mdm_ip {
     $ip_array = split($mdm_ip, ',')
