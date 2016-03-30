@@ -41,13 +41,13 @@ Most aspects of configuration of ScaleIO have been brought into Puppet.
 ### Setup Requirements
 
 * Requires ScaleIO packages available in apt repository (depending on the specific components you want to install)
-    ```
-    emc-scaleio-mdm
-    emc-scaleio-sds
-    emc-scaleio-sdc
-    emc-scaleio-gateway
-    emc_scaleio_gui
-    ```
+  ```
+  emc-scaleio-mdm
+  emc-scaleio-sds
+  emc-scaleio-sdc
+  emc-scaleio-gateway
+  emc_scaleio_gui
+  ```
 
 * Required modules to install
   ```
@@ -56,7 +56,9 @@ Most aspects of configuration of ScaleIO have been brought into Puppet.
   ```
 
 ### Beginning with scaleio
-    puppet module install cloudscaling-scaleio
+  ```
+  puppet module install cloudscaling-scaleio
+  ```
 
 ## Structure and specifics
 
@@ -65,7 +67,7 @@ All files reside in the root of manifests.
 They consist of:
 
 * NAME_server.pp files - containing installation of the services named with the "NAME". Should be invoked on the nodes where the service is to be installed.
-* All other .pp files - configure ScaleIO cluster. Should be invoked on either current master MDM or with FACTER_mdm_ips="ip1,ip2,..." set can be invoked from anywhere.
+* All other .pp files - configure ScaleIO cluster. Should be invoked on either current master MDM or with ``` FACTER_mdm_ips="ip1,ip2,..." ``` set can be invoked from anywhere.
 
 Main parameter for addressing components in cluster is "name". Only SDC is addressed by "ip" for removal.
 All resource declarations are idempotent - they can be repeated as many times as required with the same results. Any optional parameters can be specified later with the same resource declaration.
@@ -86,71 +88,71 @@ It's possible to deploy from local directory by the command (replace <my_puppet_
   host1> puppet apply "class { 'scaleio::mdm_server': master_mdm_name=>'master', mdm_ips=>'10.0.0.1' }"
   ```
   Deploy secondary MDM (can be rerun with is_manager=>0 to make it TieBreaker)
-    ```
-    host2> puppet apply "class { 'scaleio::mdm_server': }"
-    ```
+  ```
+  host2> puppet apply "class { 'scaleio::mdm_server': }"
+  ```
   Deploy TieBreaker (can be rerun with is_manager=>1 to make it Manager)
-    ```
-    host3> puppet apply "class { 'scaleio::mdm_server': is_manager=>0 }"
-    ```
+  ```
+  host3> puppet apply "class { 'scaleio::mdm_server': is_manager=>0 }"
+  ```
 
   Deploy 3 SDS server ()
-    ```
-    host1> puppet apply "class { 'scaleio::sds_server': }"
-    host2> puppet apply "class { 'scaleio::sds_server': }"
-    host3> puppet apply "class { 'scaleio::sds_server': }"
-    ```
+  ```
+  host1> puppet apply "class { 'scaleio::sds_server': }"
+  host2> puppet apply "class { 'scaleio::sds_server': }"
+  host3> puppet apply "class { 'scaleio::sds_server': }"
+  ```
 
 2. Configure the cluster (commands can be run from any node).
 
   Set FACTER_mdm_ips variable
-    ```
-    FACTER_mdm_ips='10.0.0.1,10.0.0.2'
-    ```
+  ```
+  FACTER_mdm_ips='10.0.0.1,10.0.0.2'
+  ```
 
   Login to cluster
-    ```
-    puppet apply "scaleio::login {'login': password=>'password'}"  
-    ```
+  ```
+  puppet apply "scaleio::login {'login': password=>'password'}"  
+  ```
   
   Add standby MDMs
-    ```
-    puppet apply "scaleio::mdm { 'slave': name=>'slave', ips=>'10.0.0.1', role=>'manager' }" 
-    puppet apply "scaleio::mdm { 'tb': name=>'tb', ips=>'10.0.0.2', role=>'tb' }" 
-    ```
+  ```
+  puppet apply "scaleio::mdm { 'slave': name=>'slave', ips=>'10.0.0.1', role=>'manager' }" 
+  puppet apply "scaleio::mdm { 'tb': name=>'tb', ips=>'10.0.0.2', role=>'tb' }" 
+  ```
   
   Create Protection domain with 2 storage pools (fault_sets=>['fs1','fs2','fs3']  can also be specified here)
-    ```
-    puppet apply "scaleio::protection_domain { 'protection domain': 
-	  name=>'pd', storage_pools=>['sp1'] }"
-    ```
+  ```
+  puppet apply "scaleio::protection_domain { 'protection domain': 
+	name=>'pd', storage_pools=>['sp1'] }"
+  ```
   
   Add 3 SDSs to cluster (Storage pools and device paths in comma-separated lists should go in the same order)
-    ```
-    puppet apply "scaleio::sds { 'sds 1':
-	  name=>'sds1', ips=>'10.0.0.1', protection_domain=>'pd', storage_pools=>'sp1', device_paths=>'/dev/sdb' }"
-    puppet apply "scaleio::sds { 'sds 2':
-	  name=>'sds2', ips=>'10.0.0.2', protection_domain=>'pd', storage_pools=>'sp1', device_paths=>'/dev/sdb' }"
-    puppet apply "scaleio::sds { 'sds 3':
-	  name=>'sds3', ips=>'10.0.0.3', protection_domain=>'pd', storage_pools=>'sp1', device_paths=>'/dev/sdb' }"
-    ```
+  ```
+  puppet apply "scaleio::sds { 'sds 1':
+	name=>'sds1', ips=>'10.0.0.1', protection_domain=>'pd', storage_pools=>'sp1', device_paths=>'/dev/sdb' }"
+  puppet apply "scaleio::sds { 'sds 2':
+	name=>'sds2', ips=>'10.0.0.2', protection_domain=>'pd', storage_pools=>'sp1', device_paths=>'/dev/sdb' }"
+  puppet apply "scaleio::sds { 'sds 3':
+	name=>'sds3', ips=>'10.0.0.3', protection_domain=>'pd', storage_pools=>'sp1', device_paths=>'/dev/sdb' }"
+  ```
   
 3. Deploy clients (in any order or in parallel)
 
   Deploy SDC service (should be on the same nodes where volume are mapped to)
-    ```
-    host1> puppet apply "class { 'scaleio::sdc_server': mdm_ips=>'10.0.0.1,10.0.0.2' }"
-    ```
+  ```
+  host1> puppet apply "class { 'scaleio::sdc_server': mdm_ips=>'10.0.0.1,10.0.0.2' }"
+  ```
 
   Deploy Gateway server (password and ips are optional, can be set later with the same command)
-    ```
-    host2> puppet apply "class { 'scaleio::gateway_server': mdm_ips=>'10.0.0.1,10.0.0.2', password=>'password' }"
-    ```
+  ```
+  host2> puppet apply "class { 'scaleio::gateway_server': mdm_ips=>'10.0.0.1,10.0.0.2', password=>'password' }"
+  ```
   
   Deploy GUI (optional)
-    ```
-    host3> puppet apply "class { 'scaleio::gateway_server': }"    
-    ```
+  ```
+  host3> puppet apply "class { 'scaleio::gateway_server': }"    
+  ```
    
 ## Reference
 
