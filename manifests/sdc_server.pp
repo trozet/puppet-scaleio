@@ -59,11 +59,9 @@ class scaleio::sdc_server (
     command => 'update_driver_cache.sh && verify_driver.sh',
     unless  => 'verify_driver.sh',
     path    => ['/bin/emc/scaleio/scini_sync/', '/bin/', '/usr/bin', '/sbin']
-  } ->
-  exec { 'scini driver load':
-    command => 'insmod /bin/emc/scaleio/scini.ko',
-    unless  => 'lsmod | grep scini',
-    path    => ['/bin/', '/usr/bin', '/sbin']
+  } ~>
+  service { 'scini':
+    ensure => running,
   }
   if $mdm_ip {
     $ip_array = split($mdm_ip, ',')
