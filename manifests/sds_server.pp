@@ -5,7 +5,7 @@ class scaleio::sds_server (
   )
 {
   firewall { '001 Open Port 7072 for ScaleIO SDS':
-    dport   => [7072],
+    dport  => [7072],
     proto  => tcp,
     action => accept,
   }

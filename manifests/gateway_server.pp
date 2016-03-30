@@ -43,7 +43,7 @@ class scaleio::gateway_server (
     } ->
     file_line { 'Set security bypass':
       ensure  => present,
-      line    => "security.bypass_certificate_check=true",
+      line    => 'security.bypass_certificate_check=true',
       path    => '/opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties',
       match   => '^security.bypass_certificate_check=',
       require => Package['emc-scaleio-gateway'],
@@ -52,7 +52,7 @@ class scaleio::gateway_server (
       ensure  => present,
       line    => "ssl.port=${port}",
       path    => '/opt/emc/scaleio/gateway/conf/catalina.properties',
-      match   => "^ssl.port=",
+      match   => '^ssl.port=',
       require => Package['emc-scaleio-gateway'],
     } ~>
     service { 'scaleio-gateway':
@@ -72,10 +72,10 @@ class scaleio::gateway_server (
     }
     if $password {
       exec { 'Set gateway admin password':
-        command => "java -jar /opt/emc/scaleio/gateway/webapps/ROOT/resources/install-CLI.jar --reset_password '${password}' --config_file /opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties",
-        path => '/etc/alternatives',
+        command     => "java -jar /opt/emc/scaleio/gateway/webapps/ROOT/resources/install-CLI.jar --reset_password '${password}' --config_file /opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties",
+        path        => '/etc/alternatives',
         refreshonly => true,
-        notify => Service['scaleio-gateway']
+        notify      => Service['scaleio-gateway']
       }
     }
   }

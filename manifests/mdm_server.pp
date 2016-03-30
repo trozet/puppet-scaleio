@@ -16,8 +16,8 @@ class scaleio::mdm_server (
   else {
     firewall { '001 Open Ports 6611 and 9011 for ScaleIO MDM':
       dport   => [6611, 9011],
-      proto  => tcp,
-      action => accept,
+      proto   => tcp,
+      action  => accept,
     }
     package { ['numactl', 'libaio1', 'mutt', 'python', 'python-paramiko']:
       ensure => installed,
@@ -26,17 +26,17 @@ class scaleio::mdm_server (
       ensure => $ensure,
     }
     service { ['mdm']:
-      ensure => 'running',
-      enable => true,
+      ensure    => 'running',
+      enable    => true,
       hasstatus => true,
-      require => Package['emc-scaleio-mdm'],
+      require   => Package['emc-scaleio-mdm'],
     }
 
     if $is_manager != undef {
       file_line { 'mdm role':
         path    => '/opt/emc/scaleio/mdm/cfg/conf.txt',
         line    => "actor_role_is_manager=${is_manager}",
-        match   => "^actor_role_is_manager",
+        match   => '^actor_role_is_manager',
         require => Package['emc-scaleio-mdm'],
         notify  => Service['mdm'],
         before  => [Exec['create_cluster']],
@@ -46,16 +46,16 @@ class scaleio::mdm_server (
     # Cluster creation is here
     $opts = '--approve_certificate --accept_license --create_mdm_cluster --use_nonsecure_communication'
     $management_ip_opts = $mdm_management_ips ? {
-      undef => '',
+      undef   => '',
       default => "--master_mdm_management_ip ${mdm_management_ips}"
     }
     exec { 'create_cluster':
-      onlyif => "test -n '${master_mdm_name}'",
-      require => Service['mdm'],
+      onlyif    => "test -n '${master_mdm_name}'",
+      require   => Service['mdm'],
       # Sleep is needed here because service in role changing can be still alive and not restarted
-      command => "sleep 2 ; scli --query_cluster --approve_certificate || scli ${opts} --master_mdm_name ${master_mdm_name} --master_mdm_ip ${mdm_ips} ${management_ip_opts}",
-      path => '/bin:/usr/bin',
-      tries => 5,
+      command   => "sleep 2 ; scli --query_cluster --approve_certificate || scli ${opts} --master_mdm_name ${master_mdm_name} --master_mdm_ip ${mdm_ips} ${management_ip_opts}",
+      path      => '/bin:/usr/bin',
+      tries     => 5,
       try_sleep => 5,
     }
   }
