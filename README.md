@@ -50,15 +50,13 @@ Most aspects of configuration of ScaleIO have been brought into Puppet.
     ```
 
 * Required modules to install
-    ```
-    puppet module install puppetlabs-stdlib
-    puppet module install puppetlabs-firewall
-    ```
+  ```
+  puppet module install puppetlabs-stdlib
+  puppet module install puppetlabs-firewall
+  ```
 
 ### Beginning with scaleio
-    ```
     puppet module install cloudscaling-scaleio
-    ```
 
 ## Structure and specifics
 
@@ -77,16 +75,16 @@ All resource declarations are idempotent - they can be repeated as many times as
 Example of deployment for 3 nodes MDM and 3 nodes SDS cluster is below:
 
 It's possible to deploy from local directory by the command (replace <my_puppet_dir> with the place where your puppet is):
-    ```
-    puppet apply --modulepath="/<my_puppet_dir>:/etc/puppet/modules" -e "command"
-    ```
+  ```
+  puppet apply --modulepath="/<my_puppet_dir>:/etc/puppet/modules" -e "command"
+  ```
 
 1. Deploy servers. Each puppet should be run on a machine where this service should reside (in any order or in parallel):
 
   Deploy master MDM and create 1-node cluster (can be run without name and ips to just install without cluster creation)
-    ```
-    host1> puppet apply "class { 'scaleio::mdm_server': master_mdm_name=>'master', mdm_ips=>'10.0.0.1' }"
-    ```
+  ```
+  host1> puppet apply "class { 'scaleio::mdm_server': master_mdm_name=>'master', mdm_ips=>'10.0.0.1' }"
+  ```
   Deploy secondary MDM (can be rerun with is_manager=>0 to make it TieBreaker)
     ```
     host2> puppet apply "class { 'scaleio::mdm_server': }"
