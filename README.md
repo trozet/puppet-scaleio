@@ -1,18 +1,5 @@
 # ScaleIO
 
-#### Table of Contents
-
-1. [Overview](#overview)
-2. [Module Description](#module-description)
-3. [Setup](#setup)
-    * [What ScaleIO affects](#what-scaleio-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with scaleio](#beginning-with-scaleio)
-4. [Usage](#usage)
-5. [Reference](#reference)
-5. [Limitations](#limitations)
-6. [Development](#development)
-
 ## Overview
 
 A Puppet module that installs and configures the ScaleIO 2.0 block storage service components.  The module currently supports Ubuntu 14.04.  
