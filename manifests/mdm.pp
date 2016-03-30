@@ -15,20 +15,27 @@ define scaleio::mdm (
     $management_ip_opts = $management_ips ? {undef => '', default => "--new_mdm_management_ip ${management_ips}" }
     $port_opts = $port ? {undef => '', default => "--new_mdm_port ${port}" }
     cmd {"MDM ${title} ${ensure}":
-      action => 'add_standby_mdm', ref => 'new_mdm_name', value => $name,
-      scope_ref => 'mdm_role', scope_value => $role,
-      extra_opts => "--new_mdm_ip ${ips} ${port_opts} ${management_ip_opts}",
-      unless_query => "query_cluster | grep"}
+      action       => 'add_standby_mdm',
+      ref          => 'new_mdm_name',
+      value        => $name,
+      scope_ref    => 'mdm_role',
+      scope_value  => $role,
+      extra_opts   => "--new_mdm_ip ${ips} ${port_opts} ${management_ip_opts}",
+      unless_query => 'query_cluster | grep'}
   }
   elsif $ensure == 'absent' {
     cmd {"MDM ${title} ${ensure}":
-      action => 'remove_standby_mdm', ref => 'remove_mdm_name', value => $name,}
+      action => 'remove_standby_mdm',
+      ref    => 'remove_mdm_name',
+      value  => $name,}
   }
 
   if $management_ips {
     cmd {"properties ${title} ${ensure_properties}":
-      action => 'modify_management_ip', ref => 'target_mdm_name', value => $name,
-      extra_opts => "--new_mdm_management_ip ${management_ips}"}
+      action      => 'modify_management_ip',
+      ref         => 'target_mdm_name',
+      value       => $name,
+      extra_opts  => "--new_mdm_management_ip ${management_ips}"}
   }
 
   # TODO:

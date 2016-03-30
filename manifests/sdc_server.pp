@@ -7,22 +7,22 @@ class scaleio::sdc_server (
 {
   define add_ip {
     exec { "add ip ${title}":
-	    command => "drv_cfg --add_mdm --ip ${title}",
-	    path => '/opt/emc/scaleio/sdc/bin:/bin',
-	    require => Package['emc-scaleio-sdc'],
-	    unless => "drv_cfg --query_mdms | grep ${title}"
-	  } 
-	}
-	
+      command  => "drv_cfg --add_mdm --ip ${title}",
+      path     => '/opt/emc/scaleio/sdc/bin:/bin',
+      require  => Package['emc-scaleio-sdc'],
+      unless   => "drv_cfg --query_mdms | grep ${title}"
+    }
+  }
+
   define scini_sync($config) {
     file_line { "scini_sync ${title}":
       ensure  => present,
       path    => '/bin/emc/scaleio/scini_sync/driver_sync.conf',
       match   => "^${title}",
-      line    => "${title}=${config[$title]}",	  
-    }	
+      line    => "${title}=${config[$title]}",
+    }
   }
-  
+
   $scini_sync_conf = {
     repo_address        => 'ftp://ftp.emc.com',
     repo_user           => 'QNzgdxXix',
@@ -31,7 +31,7 @@ class scaleio::sdc_server (
     module_sigcheck     => 1,
     emc_public_gpg_key  => '/bin/emc/scaleio/scini_sync/RPM-GPG-KEY-ScaleIO',
     repo_public_rsa_key => '/bin/emc/scaleio/scini_sync/scini_repo_key.pub',
-    sync_pattern        => ".*",
+    sync_pattern        => '.*',
   }
   $scini_sync_keys = keys($scini_sync_conf)
 
@@ -43,10 +43,10 @@ class scaleio::sdc_server (
   } ->
   file { '/bin/emc/scaleio/scini_sync/RPM-GPG-KEY-ScaleIO':
     ensure => $ensure,
-    source => "puppet:///modules/scaleio/RPM-GPG-KEY-ScaleIO",
-    mode  => '0644',
-    owner => 'root',
-    group => 'root',
+    source => 'puppet:///modules/scaleio/RPM-GPG-KEY-ScaleIO',
+    mode   => '0644',
+    owner  => 'root',
+    group  => 'root',
   } ->
   exec { 'scaleio repo public key':
     command => 'ssh-keyscan ftp.emc.com 2>/dev/null | grep ssh-rsa > /bin/emc/scaleio/scini_sync/scini_repo_key.pub',

@@ -6,8 +6,11 @@ define scaleio::login(
 )
 {
   cmd { "${title} login":
-    action=>'login', ref=>'password', value=>$password,
-    scope_ref=>'username', scope_value=>'admin',
+    action      => 'login',
+    ref         => 'password',
+    value       => $password,
+    scope_ref   => 'username',
+    scope_value => 'admin',
   }
 }
 
