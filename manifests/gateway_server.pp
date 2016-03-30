@@ -5,6 +5,7 @@ class scaleio::gateway_server (
   $mdm_ips      = undef,      # string - List of MDM IPs
   $password     = undef,      # string - Password for Gateway
   $port         = 4443,       # int - Port for gateway
+  $im_port      = 8081,       # int - Port for IM
   )
 {
   if $ensure == 'absent'
@@ -17,7 +18,7 @@ class scaleio::gateway_server (
   else {
     Exec { path => [ '/bin/', '/sbin/' , '/usr/bin/', '/usr/sbin/' ] }
     firewall { '001 for ScaleIO Gateway':
-      dport  => [$port],
+      dport  => [$port, $im_port],
       proto  => tcp,
       action => accept,
     }
@@ -53,6 +54,13 @@ class scaleio::gateway_server (
       line    => "ssl.port=${port}",
       path    => '/opt/emc/scaleio/gateway/conf/catalina.properties',
       match   => '^ssl.port=',
+      require => Package['emc-scaleio-gateway'],
+    } ->
+    file_line { 'Set IM web-app port':
+      ensure  => present,
+      line    => "http.port=${im_port}",
+      path    => '/opt/emc/scaleio/gateway/conf/catalina.properties',
+      match   => '^http.port=',
       require => Package['emc-scaleio-gateway'],
     } ~>
     service { 'scaleio-gateway':
