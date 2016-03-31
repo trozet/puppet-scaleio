@@ -40,28 +40,35 @@ class scaleio::sdc_server (
   } ->
   package { ['emc-scaleio-sdc']:
     ensure => $ensure,
-  } ->
-  file { '/bin/emc/scaleio/scini_sync/RPM-GPG-KEY-ScaleIO':
-    ensure => $ensure,
-    source => 'puppet:///modules/scaleio/RPM-GPG-KEY-ScaleIO',
-    mode   => '0644',
-    owner  => 'root',
-    group  => 'root',
-  } ->
-  exec { 'scaleio repo public key':
-    command => 'ssh-keyscan ftp.emc.com 2>/dev/null | grep ssh-rsa > /bin/emc/scaleio/scini_sync/scini_repo_key.pub',
-    path    => ['/bin/', '/usr/bin', '/sbin']
-  } ->
-  scini_sync{$scini_sync_keys:
-    config => $scini_sync_conf
-  } ->
-  exec { 'scini sync and update':
-    command => 'update_driver_cache.sh && verify_driver.sh',
-    unless  => 'verify_driver.sh',
-    path    => ['/bin/emc/scaleio/scini_sync/', '/bin/', '/usr/bin', '/sbin']
-  } ~>
-  service { 'scini':
-    ensure => running,
+  }
+  if $ensure == 'present' {
+    file { '/bin/emc/scaleio/scini_sync/RPM-GPG-KEY-ScaleIO':
+      ensure => present,
+      source => 'puppet:///modules/scaleio/RPM-GPG-KEY-ScaleIO',
+      mode   => '0644',
+      owner  => 'root',
+      group  => 'root',
+      require => Package['emc-scaleio-sdc']
+    } ->
+    exec { 'scaleio repo public key':
+      command => 'ssh-keyscan ftp.emc.com 2>/dev/null | grep ssh-rsa > /bin/emc/scaleio/scini_sync/scini_repo_key.pub',
+      path    => ['/bin/', '/usr/bin', '/sbin'],
+      require => Package['emc-scaleio-sdc']
+    } ->
+    scini_sync{$scini_sync_keys:
+      config => $scini_sync_conf,
+      require => Package['emc-scaleio-sdc']
+    } ->
+    exec { 'scini sync and update':
+      command => 'update_driver_cache.sh && verify_driver.sh',
+      unless  => 'verify_driver.sh',
+      path    => ['/bin/emc/scaleio/scini_sync/', '/bin/', '/usr/bin', '/sbin'],
+      require => Package['emc-scaleio-sdc']
+    } ~>
+    service { 'scini':
+      ensure => running,
+      require => Package['emc-scaleio-sdc']
+    }
   }
   if $mdm_ip {
     $ip_array = split($mdm_ip, ',')
