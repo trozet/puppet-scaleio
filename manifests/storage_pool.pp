@@ -48,13 +48,12 @@ define scaleio::storage_pool (
   set { 'set_rebuild_rebalance_parallelism':
     is_defined  => $rebalance_parallelism_limit,
     change      => "--limit ${rebalance_parallelism_limit}"}
-  set { "${scanner_mode}_background_device_scanner":
-    is_defined  => $scanner_mode != '',
-    change      => $scanner_mode_change }
-
   $scanner_mode_change = $scanner_mode ? {
     'disable'   => "--scanner_mode ${scanner_mode} --scanner_bandwidth_limit ${scanner_bandwidth_limit}",
     default     => ' '}
+  set { "${scanner_mode}_background_device_scanner":
+    is_defined  => $scanner_mode != '',
+    change      => $scanner_mode_change }
 
   # TODO:
   # Rebuild and rebalance policy should be done in separate manifest - too many options and values

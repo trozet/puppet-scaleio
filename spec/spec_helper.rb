@@ -1,17 +1,23 @@
-dir = File.expand_path(File.dirname(__FILE__))
-$LOAD_PATH.unshift File.join(dir, 'lib')
+require 'rubygems'
+require 'puppetlabs_spec_helper/module_spec_helper'
+require 'shared_examples'
 
-require 'mocha'
-require 'puppet'
-require 'rspec'
-require 'spec/autorun'
+#require 'puppet-openstack_spec_helper/defaults'
+require 'rspec-puppet'
+require 'rspec-puppet-facts'
+require 'rspec/core/rake_task'
+include RspecPuppetFacts
 
-Spec::Runner.configure do |config|
-    config.mock_with :mocha
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.pattern = './spec/classes/*_spec.rb'
+  t.pattern = './spec/defines/*_spec.rb'
 end
 
-# We need this because the RAL uses 'should' as a method.  This
-# allows us the same behaviour but with a different method name.
-class Object
-    alias :must :should
+RSpec.configure do |c|
+
+  c.alias_it_should_behave_like_to :it_configures, 'configures'
+  c.alias_it_should_behave_like_to :it_raises, 'raises'
+
 end
+
+at_exit { RSpec::Puppet::Coverage.report! }
