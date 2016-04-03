@@ -11,6 +11,7 @@ define scaleio::login(
     value       => $password,
     scope_ref   => 'username',
     scope_value => 'admin',
+    retry       => 5,
   }
 }
 

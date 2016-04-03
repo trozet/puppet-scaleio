@@ -27,6 +27,7 @@
 #                       grep" without value at the end or implicit for add
 #                       commands
 # approve_certificate - approve certificate by default
+# retry               - Number of retries
 
 define scaleio::cmd(
   $action,
@@ -42,6 +43,7 @@ define scaleio::cmd(
   $extra_opts           = '',
   $unless_query         = undef,
   $approve_certificate  = '--approve_certificate',
+  $retry                = undef,
   )
 {
   # Command
@@ -99,9 +101,11 @@ define scaleio::cmd(
     notify { "SCLI UNLESS: ${unless_command}": }
   }
   exec { $command:
-    command => $command,
-    path    => ['/bin/'],
-    unless  => $unless_command,
+    command   => $command,
+    path      => ['/bin/'],
+    unless    => $unless_command,
+    tries     => $retry,
+    try_sleep => 5,
   }
 }
 
