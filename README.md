@@ -2,6 +2,8 @@
 
 ## Overview
 
+Disclaimer: Current version is Beta 1.
+
 A Puppet module that installs and configures the ScaleIO 2.0 block storage service components.  The module currently supports Ubuntu 14.04.  
 
 ## Module Description
