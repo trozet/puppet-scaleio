@@ -70,7 +70,7 @@ It's possible to deploy from local directory by the command (replace <my_puppet_
   puppet apply --modulepath="/<my_puppet_dir>:/etc/puppet/modules" -e "command"
   ```
   
-0. You might want to make sure that kernel you have on the nodes for ScaleIO SDC installation (compute and cinder nodes) is suitable for the drivers present here: ``` ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com/ ```. Look for something like ``` Ubuntu/2.0.5014.0/4.2.0-30-generic ```. Local kernel version can be found with ``` uname -a ``` command.
+0. You might want to make sure that kernel you have on the nodes for ScaleIO SDC installation (compute and cinder nodes in case of OpenStack deployment) is suitable for the drivers present here: ``` ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com/ ```. Look for something like ``` Ubuntu/2.0.5014.0/4.2.0-30-generic ```. Local kernel version can be found with ``` uname -a ``` command.
 
 1. Deploy servers. Each puppet should be run on a machine where this service should reside (in any order or in parallel):
 
