@@ -79,7 +79,7 @@ define scaleio::cmd(
     undef   => '',
     default => "${scope_obj_ref} ${scope_value}"}
   # Paired values for arrays of pairs (e.g., ips and roles for SDS)
-  $paired_obj_value   = $paired_hash[chop($title)]
+  $paired_obj_value   = $paired_hash[$val]
   $paired_obj_ref_opt = $paired_obj_value ? {
     undef   => '',
     default => "--${paired_ref} ${paired_obj_value}"}
