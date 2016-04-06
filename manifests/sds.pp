@@ -56,15 +56,19 @@ define scaleio::sds (
         if $ip_roles {
           $ips_with_roles = hash(flatten(zip($ip_array, split($ip_roles, ','))))
           $ip_role_resources = suffix($ip_array, ",${name}2")
+          $role_existence_string = {'all'=>'All', 'sdc_only'=>'Sdc only', 'sds_only'=>'Sds only'}
           cmd {$ip_role_resources:
-            action          => 'modify_sds_ip_role',
-            ref             => 'sds_ip_to_modify',
-            value_in_title  => true,
-            scope_entity    => 'sds',
-            scope_value     => $name,
-            paired_ref      => 'new_sds_ip_role',
-            paired_hash     => $ips_with_roles,
-            require         => Cmd[$sds_resource_title] }
+            action                => 'modify_sds_ip_role',
+            ref                   => 'sds_ip_to_modify',
+            value_in_title        => true,
+            scope_entity          => 'sds',
+            scope_value           => $name,
+            paired_ref            => 'new_sds_ip_role',
+            paired_hash           => $ips_with_roles,
+            unless_query          => "query_sds --sds_name ${name} | grep",
+            unless_query_ext      => ' | grep',
+            unless_query_ext_hash => $role_existence_string,
+            require               => Cmd[$sds_resource_title] }
         }
       }
       elsif $ensure_properties == 'absent' {

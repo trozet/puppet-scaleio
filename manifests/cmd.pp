@@ -26,24 +26,33 @@
 # unless_query        - Explicit unless like "query_sds --sds_name ${name} |
 #                       grep" without value at the end or implicit for add
 #                       commands
+# unless_query_ext    - Addition to unless query checking complex conditions
+#                       with help of unless_hash values.
+#                       Example: modify_sds_ip_role where we have to check
+#                       that the ip isn't already in such role by double grep.
+# unless_query_ext_hash Dictionary of values from paired_hash to strings to use
+#                       in unless_query_suffix, 
+#                       like {'sds_only'=>'SDS', 'sdc_only'=>'SDC',...}
 # approve_certificate - approve certificate by default
 # retry               - Number of retries
 
 define scaleio::cmd(
   $action,
-  $entity               = undef,
-  $ref                  = 'name',
-  $value                = undef,
-  $scope_entity         = undef,
-  $scope_ref            = 'name',
-  $scope_value          = undef,
-  $value_in_title       = undef,
-  $paired_ref           = undef,
-  $paired_hash          = {},
-  $extra_opts           = '',
-  $unless_query         = undef,
-  $approve_certificate  = '--approve_certificate',
-  $retry                = undef,
+  $entity                 = undef,
+  $ref                    = 'name',
+  $value                  = undef,
+  $scope_entity           = undef,
+  $scope_ref              = 'name',
+  $scope_value            = undef,
+  $value_in_title         = undef,
+  $paired_ref             = undef,
+  $paired_hash            = {},
+  $extra_opts             = '',
+  $unless_query           = undef,
+  $unless_query_ext       = undef,
+  $unless_query_ext_hash  = {},
+  $approve_certificate    = '--approve_certificate',
+  $retry                  = undef,
   )
 {
   # Command
@@ -83,7 +92,18 @@ define scaleio::cmd(
   $paired_obj_ref_opt = $paired_obj_value ? {
     undef   => '',
     default => "--${paired_ref} ${paired_obj_value}"}
-
+  # Unless query extension preparation (ugly stuff used only for modify_sds_ip_role because puppet 3.7 
+  # doesn't support 'each' loops and because the only way to determine ip role is to parse human-readable output of scli)
+  $unless_hash_val = $paired_obj_value ? {
+    undef => '',
+    default => $unless_query_ext_hash[$paired_obj_value]
+  }
+  $unless_query_ext_opt = $unless_query_ext ? {
+    undef => '',
+    default => "$unless_query_ext $unless_hash_val"
+  }
+  
+  # Command compilation
   $mdm_opts = $::mdm_ips ? {
     undef   => '',
     default => "--mdm_ip ${::mdm_ips}"}
@@ -94,7 +114,7 @@ define scaleio::cmd(
   # Custom unless query for addition is set - will check existense of the val to be added
   $unless_command = $unless_query ? {
     undef   => $unless_cmd,
-    default => "scli ${mdm_opts} ${approve_certificate}  --${unless_query} ${val}"}
+    default => "scli ${mdm_opts} ${approve_certificate}  --${unless_query} ${val} ${unless_query_ext_opt}"}
 
   notify { "SCLI COMMAND: ${command}": }
   if $unless_command {
