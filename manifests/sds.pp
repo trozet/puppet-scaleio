@@ -43,7 +43,7 @@ define scaleio::sds (
       $ip_array = split($ips, ',')
 
       if $ensure_properties == 'present' {
-        $ip_resources = suffix($ip_array, ",${name}1")
+        $ip_resources = suffix($ip_array, ",${name}2")
         cmd {$ip_resources:
           action         => 'add_sds_ip',
           ref            => 'new_sds_ip',
@@ -56,7 +56,7 @@ define scaleio::sds (
         if $ip_roles {
           $ips_with_roles = hash(flatten(zip($ip_array, split($ip_roles, ','))))
           $ip_role_resources = suffix($ip_array, ",${name}2")
-          $role_existence_string = {'all'=>'All', 'sdc_only'=>'Sdc only', 'sds_only'=>'Sds only'}
+          $role_existence_string = {'all'=>'All', 'sdc_only'=>'SDC Only', 'sds_only'=>'SDS Only'}
           cmd {$ip_role_resources:
             action                => 'modify_sds_ip_role',
             ref                   => 'sds_ip_to_modify',
