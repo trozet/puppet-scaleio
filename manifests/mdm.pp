@@ -35,7 +35,8 @@ define scaleio::mdm (
       action      => 'modify_management_ip',
       ref         => 'target_mdm_name',
       value       => $name,
-      extra_opts  => "--new_mdm_management_ip ${management_ips}"}
+      extra_opts  => "--new_mdm_management_ip ${management_ips}"},
+      require     => Cmd["MDM ${title} ${ensure}"]
   }
 
   # TODO:
