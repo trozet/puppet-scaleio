@@ -100,7 +100,7 @@ define scaleio::cmd(
   }
   $unless_query_ext_opt = $unless_query_ext ? {
     undef => '',
-    default => "$unless_query_ext $unless_hash_val"
+    default => "${unless_query_ext} '${unless_hash_val}'"
   }
   
   # Command compilation
