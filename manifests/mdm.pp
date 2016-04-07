@@ -21,13 +21,15 @@ define scaleio::mdm (
       scope_ref    => 'mdm_role',
       scope_value  => $role,
       extra_opts   => "--new_mdm_ip ${ips} ${port_opts} ${management_ip_opts}",
-      unless_query => 'query_cluster | grep'}
+      unless_query => 'query_cluster | grep'
+    }
   }
   elsif $ensure == 'absent' {
     cmd {"MDM ${title} ${ensure}":
       action => 'remove_standby_mdm',
       ref    => 'remove_mdm_name',
-      value  => $name,}
+      value  => $name,
+    }
   }
 
   if $management_ips {
@@ -35,8 +37,9 @@ define scaleio::mdm (
       action      => 'modify_management_ip',
       ref         => 'target_mdm_name',
       value       => $name,
-      extra_opts  => "--new_mdm_management_ip ${management_ips}"},
+      extra_opts  => "--new_mdm_management_ip ${management_ips}",
       require     => Cmd["MDM ${title} ${ensure}"]
+    }
   }
 
   # TODO:
