@@ -43,7 +43,7 @@ define scaleio::sds (
       $ip_array = split($ips, ',')
 
       if $ensure_properties == 'present' {
-        $ip_resources = suffix($ip_array, ",${name}2")
+        $ip_resources = suffix($ip_array, ",${name}1")
         cmd {$ip_resources:
           action         => 'add_sds_ip',
           ref            => 'new_sds_ip',
