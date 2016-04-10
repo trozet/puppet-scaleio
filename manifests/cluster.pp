@@ -16,7 +16,7 @@ define scaleio::cluster (
   if $cluster_mode {
     # Cluster mode changed
     $action = $ensure ? {'absent' => 'remove', default => 'add'}
-    cmd {"switch cluster mode ${cluster_mode}, action: ${action}, slaves: ${slave_names}, tbs: ${tb_names}":
+    cmd {"switch cluster mode ${ensure}":
       action        => 'switch_cluster_mode',
       ref           => 'cluster_mode',
       value         => "${cluster_mode}_node",
