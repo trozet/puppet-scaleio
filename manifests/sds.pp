@@ -2,16 +2,17 @@
 # requires FACTER ::mdm_ips to be set if not run from master MDM
 
 define scaleio::sds (
-  $name,                            # string - SDS name
-  $ensure             = 'present',  # present|absent - Add or remove SDS to cluster
-  $ensure_properties  = 'present',  # present|absent - Add or remove SDS properties
-  $protection_domain  = undef,      # string - Protection domain to specify when adding to cluster
-  $fault_set          = undef,      # string - Fault set
-  $port               = undef,      # int - SDS Port
-  $ips                = undef,      # string - List of SDS IPs
-  $ip_roles           = undef,      # string - List of all|sdc_only|sds_only like 'all,sdc_only,sds_only'
-  $storage_pools      = undef,      # string - List of storage pools
-  $device_paths       = undef,      # string - List of device paths in the same order as pools above
+  $name,                                        # string - SDS name
+  $ensure               = 'present',            # present|absent - Add or remove SDS to cluster
+  $ensure_properties    = 'present',            # present|absent - Add or remove SDS properties
+  $protection_domain    = undef,                # string - Protection domain to specify when adding to cluster
+  $fault_set            = undef,                # string - Fault set
+  $port                 = undef,                # int - SDS Port
+  $ips                  = undef,                # string - List of SDS IPs
+  $ip_roles             = undef,                # string - List of all|sdc_only|sds_only like 'all,sdc_only,sds_only'
+  $storage_pools        = undef,                # string - List of storage pools
+  $device_paths         = undef,                # string - List of device paths in the same order as pools above
+  $performance_profile  = 'high_performance',   # string - performance profile for SDS
   )
 {
   if $ensure == 'absent' {
@@ -110,6 +111,16 @@ define scaleio::sds (
           scope_value     => $name,
           require         => Cmd[$sds_resource_title] }
       }
+    }
+
+    #Apply profile high_performance
+    $mdm_opts = $::mdm_ips ? {
+      undef   => '',
+      default => "--mdm_ip ${::mdm_ips}"}
+    exec { "Apply high_performance profile for ${sds_resource_title}":
+      command   => "scli ${mdm_opts} --set_performance_parameters --sds_name ${name} --apply_to_mdm --profile ${performance_profile}",
+      path      => '/bin:/usr/bin',
+      require   => Cmd[$sds_resource_title]
     }
   }
 

@@ -2,8 +2,9 @@
 # requires FACTER ::mdm_ips to be set if not run from master MDM
 
 define scaleio::sdc (
-  $ip,                  # string - IP to specify SDC in cluster
-  $ensure = 'present',  # present|absent - 'absent' removes SDC from cluster
+  $ip,                                        # string - IP to specify SDC in cluster
+  $ensure               = 'present',          # present|absent - 'absent' removes SDC from cluster
+  $performance_profile  = 'high_performance', # performance profile for SDC
   )
 {
   if $ensure == 'absent' {
@@ -12,5 +13,14 @@ define scaleio::sdc (
       ref         => 'sdc_ip',
       value       => $ip,
       extra_opts  => '--i_am_sure'}
+  } else {
+    #Apply profile high_performance
+    $mdm_opts = $::mdm_ips ? {
+      undef   => '',
+      default => "--mdm_ip ${::mdm_ips}"}
+    exec { "Apply high_performance profile for SDC ${ip}":
+      command   => "scli ${mdm_opts} --set_performance_parameters --sdc_ip ${ip} --apply_to_mdm --profile ${performance_profile}",
+      path      => '/bin:/usr/bin',
+    }
   }
 }
