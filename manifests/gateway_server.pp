@@ -45,14 +45,14 @@ class scaleio::gateway_server (
     service { 'scaleio-gateway':
       ensure  => 'running',
       enable  => true,
-    } ->
+    }
+
     file_line { 'Set security bypass':
       ensure  => present,
       line    => 'security.bypass_certificate_check=true',
       path    => '/opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties',
       match   => '^security.bypass_certificate_check=',
       require => Package['emc-scaleio-gateway'],
-      notify  => Service['scaleio-gateway']
     } ->
     file_line { 'Set gateway port':
       ensure  => present,
@@ -60,7 +60,6 @@ class scaleio::gateway_server (
       path    => '/opt/emc/scaleio/gateway/conf/catalina.properties',
       match   => '^ssl.port=',
       require => Package['emc-scaleio-gateway'],
-      notify  => Service['scaleio-gateway']
     } ->
     file_line { 'Set IM web-app port':
       ensure  => present,
@@ -68,7 +67,6 @@ class scaleio::gateway_server (
       path    => '/opt/emc/scaleio/gateway/conf/catalina.properties',
       match   => '^http.port=',
       require => Package['emc-scaleio-gateway'],
-      notify  => Service['scaleio-gateway']
     }
     if $mdm_ips {
       $mdm_ips_str = join(split($mdm_ips,','), ';')
@@ -78,7 +76,6 @@ class scaleio::gateway_server (
         path    => '/opt/emc/scaleio/gateway/webapps/ROOT/WEB-INF/classes/gatewayUser.properties',
         match   => '^mdm.ip.addresses=.*',
         require => Package['emc-scaleio-gateway'],
-        notify  => Service['scaleio-gateway']
       }
     }
     if $password {
@@ -89,6 +86,8 @@ class scaleio::gateway_server (
         notify      => Service['scaleio-gateway']
       }
     }
+
+    File_line <| |> ~> Service['scaleio-gateway']
   }
 
   # TODO:
