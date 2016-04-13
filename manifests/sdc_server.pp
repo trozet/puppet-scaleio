@@ -45,7 +45,7 @@ class scaleio::sdc_server (
       path    => ['/bin/', '/usr/bin', '/sbin'],
       require => Package['emc-scaleio-sdc']
     } ->
-    scini_sync{$scini_sync_keys:
+    scini_sync { $scini_sync_keys:
       config => $scini_sync_conf,
       require => Package['emc-scaleio-sdc']
     } ->
