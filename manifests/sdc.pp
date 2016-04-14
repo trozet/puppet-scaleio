@@ -19,7 +19,7 @@ define scaleio::sdc (
       undef   => '',
       default => "--mdm_ip ${::mdm_ips}"}
     exec { "Apply high_performance profile for SDC ${ip}":
-      command   => "scli ${mdm_opts} --set_performance_parameters --sdc_ip ${ip} --apply_to_mdm --profile ${performance_profile}",
+      command   => "scli ${mdm_opts} --set_performance_parameters --all_sdc --apply_to_mdm --profile ${performance_profile}",
       path      => '/bin:/usr/bin',
     }
   }
