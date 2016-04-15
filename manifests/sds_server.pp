@@ -16,9 +16,13 @@ class scaleio::sds_server (
     ensure => $ensure,
   } ->
   exec { 'Apply noop IO scheduler for SSD/flash disks':
-    command   => 'bash -c \'for i in `lsblk -d -o ROTA,KNAME | awk "/^ *0/ {print($2)}"` ; do if [ -f /sys/block/$i/queue/scheduler ]; then echo noop > /sys/block/$i/queue/scheduler; fi; done\'',
-    path      => '/bin:/usr/bin',
-  }
+    command => 'bash -c \'for i in `lsblk -d -o ROTA,KNAME | awk "/^ *0/ {print($2)}"` ; do if [ -f /sys/block/$i/queue/scheduler ]; then echo noop > /sys/block/$i/queue/scheduler; fi; done\'',
+    path    => '/bin:/usr/bin',
+  } ->
+  file { 'Ensure noop IO scheduler persistent':
+    content => 'ACTION=="add|change", KERNEL=="[a-z]*", ATTR{queue/rotational}=="0",ATTR{queue/scheduler}="noop"',
+    path    => '/etc/udev/rules.d/60-scaleio-ssd-scheduler.rules',
+  }  
   
   
   # TODO:
