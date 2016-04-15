@@ -146,8 +146,8 @@ It's possible to deploy from local directory by the command (replace <my_puppet_
   ```
 
 ## Performance tuning
-  The manifest scaleio::sds_server sets noop scheduler for all SSD disks.
-  The manifests scaleio::sdc and scaleio::sds apply high_performance profile for all components (MDM, SDS, SDC). In order to use regular profile set the parameter performance_profile, e.g.
+* The manifest scaleio::sds_server sets noop scheduler for all SSD disks.
+* The manifests scaleio::sdc and scaleio::sds apply high_performance profile for SDS and SDC. In order to use regular profile set the parameter performance_profile, e.g.
   ```
   puppet apply "scaleio::sds { 'sds 1':
 	name=>'sds1', ips=>'10.0.0.1', protection_domain=>'pd', storage_pools=>'sp1',
