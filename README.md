@@ -169,5 +169,4 @@ No InstallationManager support is provided. Provisioning of LIA and CallHome is 
 
 ## Contact information
 
-- [Project Homepage](https://launchpad.net/puppet-scaleio)
-- [Project Bug Tracker](https://bugs.launchpad.net/puppet-scaleio)
+- [Project Bug Tracker](https://github.com/cloudscaling/puppet-scaleio/issues)
