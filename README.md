@@ -167,3 +167,7 @@ Alternatively after SDC deployment scini driver can be updated on the system acc
 
 No InstallationManager support is provided. Provisioning of LIA and CallHome is not available.
 
+## Contact information
+
+- [Project Homepage](https://launchpad.net/puppet-scaleio)
+- [Project Bug Tracker](https://bugs.launchpad.net/puppet-scaleio)
