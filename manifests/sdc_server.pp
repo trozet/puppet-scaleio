@@ -41,7 +41,7 @@ class scaleio::sdc_server (
       require => Package['emc-scaleio-sdc']
     } ->
     exec { 'scaleio repo public key':
-      command => "ssh-keyscan ${ftp_host} 2>/dev/null | grep ssh-rsa > /bin/emc/scaleio/scini_sync/scini_repo_key.pub",
+      command => "ssh-keyscan ${ftp_host} | grep ssh-rsa > /bin/emc/scaleio/scini_sync/scini_repo_key.pub",
       path    => ['/bin/', '/usr/bin', '/sbin'],
       require => Package['emc-scaleio-sdc']
     } ->

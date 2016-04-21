@@ -26,6 +26,7 @@
 # unless_query        - Explicit unless like "query_sds --sds_name ${name} |
 #                       grep" without value at the end or implicit for add
 #                       commands
+# onlyif_query        - Explicit onlyif query without value at the end
 # unless_query_ext    - Addition to unless query checking complex conditions
 #                       with help of unless_hash values.
 #                       Example: modify_sds_ip_role where we have to check
@@ -49,6 +50,7 @@ define scaleio::cmd(
   $paired_hash            = {},
   $extra_opts             = '',
   $unless_query           = undef,
+  $onlyif_query           = undef,
   $unless_query_ext       = undef,
   $unless_query_ext_hash  = {},
   $approve_certificate    = '--approve_certificate',
@@ -114,16 +116,23 @@ define scaleio::cmd(
   # Custom unless query for addition is set - will check existense of the val to be added
   $unless_command = $unless_query ? {
     undef   => $unless_cmd,
-    default => "scli ${mdm_opts} ${approve_certificate}  --${unless_query} ${val} ${unless_query_ext_opt}"}
+    default => "scli ${mdm_opts} ${approve_certificate} --${unless_query} ${val} ${unless_query_ext_opt}"}
+  $onlyif_command = $onlyif_query ? {
+    undef   => undef,
+    default => "scli ${mdm_opts} ${approve_certificate} --${onlyif_query} ${val}"}
 
   notify { "SCLI COMMAND: ${command}": }
   if $unless_command {
     notify { "SCLI UNLESS: ${unless_command}": }
   }
+  if $onlyif_command {
+    notify { "SCLI ONLYIF: ${onlyif_command}": }
+  }
   exec { $command:
     command   => $command,
     path      => ['/bin/'],
     unless    => $unless_command,
+    onlyif    => $onlyif_command,
     tries     => $retry,
     try_sleep => 5,
   }
