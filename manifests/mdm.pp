@@ -20,25 +20,27 @@ define scaleio::mdm (
       value        => $name,
       scope_ref    => 'mdm_role',
       scope_value  => $role,
-      extra_opts   => "--new_mdm_ip ${ips} ${port_opts} ${management_ip_opts}",
+      extra_opts   => "--new_mdm_ip ${ips} ${port_opts} ${management_ip_opts} --force_clean --i_am_sure",
       unless_query => 'query_cluster | grep'
     }
   }
   elsif $ensure == 'absent' {
     cmd {"MDM ${title} ${ensure}":
-      action => 'remove_standby_mdm',
-      ref    => 'remove_mdm_name',
-      value  => $name,
+      action        => 'remove_standby_mdm',
+      ref           => 'remove_mdm_name',
+      value         => $name,
+      onlyif_query  => 'query_cluster | grep'
     }
   }
 
   if $management_ips {
     cmd {"properties ${title} ${ensure_properties}":
-      action      => 'modify_management_ip',
-      ref         => 'target_mdm_name',
-      value       => $name,
-      extra_opts  => "--new_mdm_management_ip ${management_ips}",
-      require     => Cmd["MDM ${title} ${ensure}"]
+      action        => 'modify_management_ip',
+      ref           => 'target_mdm_name',
+      value         => $name,
+      extra_opts    => "--new_mdm_management_ip ${management_ips}",
+      unless_query  => "query_cluster | grep -B 1 \"Management IPs: ${management_ips}\" | grep",
+      require       => Cmd["MDM ${title} ${ensure}"]
     }
   }
 
