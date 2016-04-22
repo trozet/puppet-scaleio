@@ -50,7 +50,7 @@ end
 
 
 $mdm_ips = Facter.value(:mdm_ips)
-if $mdm_ips and $mdm_ips != ''
+if $mdm_ips
   # Register all facts for MDMs
   # Example of output that facters below parse:
   #   Cluster:
@@ -85,20 +85,16 @@ if $mdm_ips and $mdm_ips != ''
       setcode do
         # Define mdm opts for SCLI tool to connect to ScaleIO cluster.
         # If there is no mdm_ips available it is expected to be run on a node with MDM Master. 
-        mdm_opts = []
-        $mdm_ips.split(',').each do |ip|
-          mdm_opts.push("--mdm_ip %s" % ip)
+        mdm_opts = ''
+        if $mdm_ips != ''
+          mdm_opts = "--mdm_ip %s" % $mdm_ips
         end
         ip = nil
-        # the cycle over MDM IPs because for query cluster SCLI's behaiveour is strange 
-        # it works for one IP but doesn't for the list.
-        mdm_opts.each do |opts|
-          query_cmd = "scli %s --query_cluster --approve_certificate 2>>%s" % [opts, $scaleio_log_file]
-          cmd = "%s | sed -n '%s' | sed -n '%s' | awk '/%s/ {print($2)}' | tr -d ','" % [query_cmd, selector[0], selector[1], selector[2]]
-          debug_log(cmd)
-          res = Facter::Util::Resolution.exec(cmd)
-          ip = res.split(' ').join(',') unless !res
-        end
+        query_cmd = "scli %s --query_cluster --approve_certificate 2>>%s" % [mdm_opts, $scaleio_log_file]
+        cmd = "%s | sed -n '%s' | sed -n '%s' | awk '/%s/ {print($2)}' | tr -d ','" % [query_cmd, selector[0], selector[1], selector[2]]
+        debug_log(cmd)
+        res = Facter::Util::Resolution.exec(cmd)
+        ip = res.split(' ').join(',') unless !res
         debug_log("%s='%s'" % [name, ip])
         ip
       end
