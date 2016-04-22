@@ -15,8 +15,9 @@ define scaleio::sds (
   $performance_profile  = 'high_performance',   # string - performance profile for SDS
   )
 {
+  $sds_resource_title = "SDS ${title} ${ensure}"
   if $ensure == 'absent' {
-    cmd {'$ensure':
+    cmd {$sds_resource_title:
       action => $ensure,
       entity => 'sds',
       value  => $name,
@@ -31,7 +32,6 @@ define scaleio::sds (
     $device_path_opts = $device_paths ? {undef => '', default => "--device_path ${device_paths}" }
     $fault_set_opts = $fault_set ? {undef => '', default => "--fault_set_name ${fault_set}" }
     $port_opts = $port ? {undef => '', default => "--sds_port ${port}" }
-    $sds_resource_title = "SDS ${title} ${ensure}"
     cmd {$sds_resource_title:
       action       => $ensure,
       entity       => 'sds',
