@@ -104,7 +104,7 @@ define scaleio::cmd(
     undef => '',
     default => "${unless_query_ext} '${unless_hash_val}'"
   }
-  
+
   # Command compilation
   $mdm_opts = $::mdm_ips ? {
     undef   => '',

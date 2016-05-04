@@ -12,7 +12,7 @@ define scaleio::sds (
   $ip_roles             = undef,                # string - List of all|sdc_only|sds_only like 'all,sdc_only,sds_only'
   $storage_pools        = undef,                # string - List of storage pools
   $device_paths         = undef,                # string - List of device paths in the same order as pools above
-  $performance_profile  = 'high_performance',   # string - performance profile for SDS
+  $performance_profile  = 'high_performance',   # string - performance profile for SDS: default or high_performance
   )
 {
   $sds_resource_title = "SDS ${title} ${ensure}"

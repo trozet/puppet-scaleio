@@ -46,7 +46,7 @@ define scaleio::cluster (
     cmd {"replace cluster nodes ${add_slave_opts} ${remove_slave_opts} ${add_tb_opts} ${remove_tb_opts}":
       action        => 'replace_cluster_mdm',
       extra_opts    => "${add_slave_opts} ${remove_slave_opts} ${add_tb_opts} ${remove_tb_opts} --allow_leave_failed --i_am_sure",
-    }    
+    }
   }
   if $new_password {
     cmd {'set password':

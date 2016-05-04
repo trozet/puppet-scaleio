@@ -4,7 +4,7 @@
 define scaleio::sdc (
   $ip,                                        # string - IP to specify SDC in cluster
   $ensure               = 'present',          # present|absent - 'absent' removes SDC from cluster
-  $performance_profile  = 'high_performance', # performance profile for SDC
+  $performance_profile  = 'high_performance', # performance profile for SDC: default or high_performance
   )
 {
   if $ensure == 'absent' {

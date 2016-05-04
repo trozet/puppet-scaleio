@@ -22,9 +22,9 @@ class scaleio::sds_server (
   file { 'Ensure noop IO scheduler persistent':
     content => 'ACTION=="add|change", KERNEL=="[a-z]*", ATTR{queue/rotational}=="0",ATTR{queue/scheduler}="noop"',
     path    => '/etc/udev/rules.d/60-scaleio-ssd-scheduler.rules',
-  }  
-  
-  
+  }
+
+
   # TODO:
   # "absent" cleanup
 }
