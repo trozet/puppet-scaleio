@@ -3,3 +3,4 @@ pkg/*
 spec/fixtures/modules
 .vagrant
 .project
+.buildpath
