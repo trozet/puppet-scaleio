@@ -76,13 +76,13 @@ It's possible to deploy from local directory by the command (replace <my_puppet_
 
   Deploy master MDM and create 1-node cluster (can be run without name and ips to just install without cluster creation)
   ```
-  host1> puppet apply "class { 'scaleio::mdm_server': master_mdm_name=>'master', mdm_ips=>'10.0.0.1' }"
+  host1> puppet apply "class { 'scaleio::mdm_server': master_mdm_name=>'master', mdm_ips=>'10.0.0.1', is_manager=>1 }"
   ```
-  Deploy secondary MDM (can be rerun with is_manager=>0 to make it TieBreaker)
+  Deploy secondary MDM
   ```
-  host2> puppet apply "class { 'scaleio::mdm_server': }"
+  host2> puppet apply "class { 'scaleio::mdm_server': is_manager=>1 }"
   ```
-  Deploy TieBreaker (can be rerun with is_manager=>1 to make it Manager)
+  Deploy TieBreaker
   ```
   host3> puppet apply "class { 'scaleio::mdm_server': is_manager=>0 }"
   ```

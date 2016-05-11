@@ -6,10 +6,17 @@ class scaleio::mdm_server (
   $master_mdm_name          = undef,      # string - Name of the master node
   $mdm_ips                  = undef,      # string - MDM IPs
   $mdm_management_ips       = undef,      # string - MDM management IPs
+  $cluster_password         = undef,      # string - Cluster Password
   )
 {
+  require scaleio
+  $mdm_package = $::osfamily ? {
+      'RedHat' => 'EMC-ScaleIO-mdm',
+      'Debian' => 'emc-scaleio-mdm',
+  }
+
   if $ensure == 'absent' {
-    package { ['emc-scaleio-mdm']:
+    package { [$mdm_package]:
       ensure => 'absent',
     }
   }
@@ -19,17 +26,17 @@ class scaleio::mdm_server (
       proto   => tcp,
       action  => accept,
     }
-    package { ['numactl', 'libaio1', 'mutt', 'python', 'python-paramiko']:
+    package { ['mutt', 'python', 'python-paramiko']:
       ensure => installed,
     } ->
-    package { ['emc-scaleio-mdm']:
+    package { [$mdm_package]:
       ensure => $ensure,
     }
     service { ['mdm']:
       ensure    => 'running',
       enable    => true,
       hasstatus => true,
-      require   => Package['emc-scaleio-mdm'],
+      require   => Package[$mdm_package],
     }
 
     if $is_manager != undef {
@@ -37,7 +44,7 @@ class scaleio::mdm_server (
         path    => '/opt/emc/scaleio/mdm/cfg/conf.txt',
         line    => "actor_role_is_manager=${is_manager}",
         match   => '^actor_role_is_manager',
-        require => Package['emc-scaleio-mdm'],
+        require => Package[$mdm_package],
         notify  => Service['mdm'],
         before  => [Exec['create_cluster']],
       }
@@ -58,6 +65,15 @@ class scaleio::mdm_server (
       tries     => 5,
       try_sleep => 5,
     }
+    ->
+    exec {'set_cluster_password':
+      onlyif  => "scli  --approve_certificate --login --username admin --password admin | grep -i 'Current password must be changed'",
+      command => "scli  --approve_certificate --set_password --old_password admin --new_password ${cluster_password}",
+      path      => '/bin:/usr/bin',
+      tries     => 5,
+      try_sleep => 5,
+    }
+
   }
 
   # TODO:

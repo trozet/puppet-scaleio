@@ -4,15 +4,20 @@ class scaleio::sds_server (
   $ensure = 'present',  # present|absent - Install or remove SDS service
   )
 {
+  require scaleio
+
   firewall { '001 Open Port 7072 for ScaleIO SDS':
     dport  => [7072],
     proto  => tcp,
     action => accept,
   }
-  package { ['numactl', 'libaio1']:
-    ensure => installed,
-  } ->
-  package { ['emc-scaleio-sds']:
+
+  $sds_package = $::osfamily ? {
+      'RedHat' => 'EMC-ScaleIO-sds',
+      'Debian' => 'emc-scaleio-sds',
+  }
+
+  package { $sds_package:
     ensure => $ensure,
   } ->
   exec { 'Apply noop IO scheduler for SSD/flash disks':

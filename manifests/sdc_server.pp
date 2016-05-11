@@ -1,11 +1,18 @@
 # Configure ScaleIO SDC service installation
 
 class scaleio::sdc_server (
-  $ensure  = 'present',                               # present|absent - Install or remove SDC service
-  $mdm_ip  = undef,                                   # string - List of MDM IPs
-  $ftp     = 'ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com' # string - FTP with user and password
+  $ensure        = 'present',                                # present|absent - Install or remove SDC service
+  $mdm_ip        = undef,                                    # string - List of MDM IPs
+  $ftp           = 'ftp://QNzgdxXix:Aw3wFAwAq3@ftp.emc.com', # string - FTP with user and password
+  $update_driver = true,                                     # boolean - Connect to internet and update driver
   )
 {
+  require scaleio
+
+  $sdc_package = $::osfamily ? {
+      'RedHat' => 'EMC-ScaleIO-sdc',
+      'Debian' => 'emc-scaleio-sdc',
+  }
   $ftp_split = split($ftp, '@')
   $ftp_host = $ftp_split[1]
   $ftp_proto_split = split($ftp_split[0], '://')
@@ -25,39 +32,39 @@ class scaleio::sdc_server (
   }
   $scini_sync_keys = keys($scini_sync_conf)
 
-  package { ['numactl', 'libaio1']:
-    ensure => installed,
-  } ->
-  package { ['emc-scaleio-sdc']:
+  package { $sdc_package:
     ensure => $ensure,
   }
   if $ensure == 'present' {
-    file { '/bin/emc/scaleio/scini_sync/RPM-GPG-KEY-ScaleIO':
-      ensure => present,
-      source => 'puppet:///modules/scaleio/RPM-GPG-KEY-ScaleIO',
-      mode   => '0644',
-      owner  => 'root',
-      group  => 'root',
-      require => Package['emc-scaleio-sdc']
-    } ->
-    exec { 'scaleio repo public key':
-      command => "ssh-keyscan ${ftp_host} | grep ssh-rsa > /bin/emc/scaleio/scini_sync/scini_repo_key.pub",
-      path    => ['/bin/', '/usr/bin', '/sbin'],
-      require => Package['emc-scaleio-sdc']
-    } ->
-    scini_sync { $scini_sync_keys:
-      config => $scini_sync_conf,
-      require => Package['emc-scaleio-sdc']
-    } ->
-    exec { 'scini sync and update':
-      command => 'update_driver_cache.sh && verify_driver.sh',
-      unless  => 'verify_driver.sh',
-      path    => ['/bin/emc/scaleio/scini_sync/', '/bin/', '/usr/bin', '/sbin'],
-      require => Package['emc-scaleio-sdc']
-    } ~>
+    if $update_driver {
+      file { '/bin/emc/scaleio/scini_sync/RPM-GPG-KEY-ScaleIO':
+        ensure  => present,
+        source  => 'puppet:///modules/scaleio/RPM-GPG-KEY-ScaleIO',
+        mode    => '0644',
+        owner   => 'root',
+        group   => 'root',
+        require => Package[$sdc_package]
+      } ->
+      exec { 'scaleio repo public key':
+        command => "ssh-keyscan ${ftp_host} | grep ssh-rsa > /bin/emc/scaleio/scini_sync/scini_repo_key.pub",
+        path    => ['/bin/', '/usr/bin', '/sbin'],
+        require => Package[$sdc_package]
+      } ->
+      scini_sync { $scini_sync_keys:
+        config  => $scini_sync_conf,
+        require => Package[$sdc_package]
+      } ->
+      exec { 'scini sync and update':
+        command => 'update_driver_cache.sh && verify_driver.sh',
+        unless  => 'verify_driver.sh',
+        path    => ['/bin/emc/scaleio/scini_sync/', '/bin/', '/usr/bin', '/sbin'],
+        require => Package[$sdc_package],
+        notify  => Service['scini']
+      }
+    }
     service { 'scini':
       ensure => running,
-      require => Package['emc-scaleio-sdc']
+      require => Package[$sdc_package]
     }
   }
   if $mdm_ip {
@@ -71,15 +78,20 @@ class scaleio::sdc_server (
       line    => "mdm ${mdm_ip}",
       path    => '/bin/emc/scaleio/drv_cfg.txt',
       match   => '^mdm .*',
-      require => Package['emc-scaleio-sdc'],
+      require => Package[$sdc_package],
     }
   }
 
   define add_ip {
+    $sdc_package = $::osfamily ? {
+      'RedHat' => 'EMC-ScaleIO-sdc',
+      'Debian' => 'emc-scaleio-sdc',
+    }
+
     exec { "add ip ${title}":
       command  => "drv_cfg --add_mdm --ip ${title}",
       path     => '/opt/emc/scaleio/sdc/bin:/bin',
-      require  => Package['emc-scaleio-sdc'],
+      require  => Package[$sdc_package],
       unless   => "drv_cfg --query_mdms | grep ${title}"
     }
   }
